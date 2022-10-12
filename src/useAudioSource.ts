@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import useRequestAnimationFrame from "./useRequestAnimationFrame";
 
+export type RawData = number[];
+
 function useAudioSource() {
-  const [rawData, setRawData] = useState<number[]>([]);
+  const [rawData, setRawData] = useState<RawData>([]);
   const [byteArray, setByteArray] = useState<ArrayBuffer>();
   const [isError, setIsError] = useState<false | string>(false);
 
