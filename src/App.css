@@ -4,4 +4,6 @@
   border: 1px solid transparent;
   outline: 1px solid transparent;
   border-radius: 0;
+  display: grid;
+  place-items: center;
 }
