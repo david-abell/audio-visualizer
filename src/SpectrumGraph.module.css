@@ -1,0 +1,21 @@
+.visualizer-container {
+  width: 100vw;
+  height: 100vh;
+  border: 1px solid transparent;
+  outline: 1px solid transparent;
+  border-radius: 0;
+  display: grid;
+  place-items: center;
+}
+
+.test {
+  color: red;
+}
+
+.test2 {
+  color: red;
+}
+
+.test3 {
+  color: red;
+}

@@ -1,5 +1,6 @@
 import { interpolateRainbow, line } from "d3";
 import { useMemo } from "react";
+import styles from "./SpectrumGraph.module.css";
 import useAudioSource, { RawData } from "./useAudioSource";
 
 const lineBuilder = line();
@@ -9,7 +10,6 @@ interface Path {
   color: string;
   amplitude: number;
 }
-
 function getLinePaths(data: RawData): Path[] {
   const result: Path[] = [];
   let currentX = 100;
@@ -45,7 +45,7 @@ function SpectrumGraph() {
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       onClick={() => handlePlay()}
       type="button"
-      className="visualizer-container"
+      className={styles.visualizerContainer}
     >
       <svg
         width="100%"
