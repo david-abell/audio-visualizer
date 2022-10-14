@@ -10,6 +10,7 @@ function useAudioSource() {
 
   const audioContextRef = useRef<AudioContext | undefined>();
   const audioBufferRef = useRef<AudioBuffer | null>(null);
+  const gainRef = useRef<GainNode | undefined>();
   const sourceRef = useRef<AudioBufferSourceNode | undefined>();
 
   const analyzerRef = useRef<AnalyserNode | undefined>();
@@ -20,27 +21,38 @@ function useAudioSource() {
   const initContext = async () => {
     if (!byteArray || sourceRef.current) return;
     audioContextRef.current = new AudioContext();
+    gainRef.current = audioContextRef.current.createGain();
+    analyzerRef.current = audioContextRef.current.createAnalyser();
+    sourceRef.current = audioContextRef.current.createBufferSource();
+
     audioBufferRef.current = await audioContextRef.current.decodeAudioData(
       byteArray
     );
-    analyzerRef.current = audioContextRef.current.createAnalyser();
     analyzerRef.current.fftSize = 512;
-    analyzerRef.current.connect(audioContextRef.current.destination);
-    sourceRef.current = audioContextRef.current.createBufferSource();
     sourceRef.current.buffer = audioBufferRef.current;
-    sourceRef.current.connect(audioContextRef.current.destination);
-    sourceRef.current.start();
+    gainRef.current.gain.value = 0.4;
+
     bufferLength.current = analyzerRef.current.frequencyBinCount;
     dataArray.current = new Uint8Array(bufferLength.current);
-    sourceRef.current.connect(analyzerRef.current);
+    sourceRef.current.loop = true;
+
+    sourceRef.current
+      .connect(analyzerRef.current)
+      .connect(gainRef.current)
+      .connect(audioContextRef.current.destination);
+
+    sourceRef.current.start();
   };
+
+  const SOURCE_NAME = "SailingAway.mp3";
+  // const SOURCE_NAME = "GothamCity.mp3";
 
   // fetch media
   useEffect(() => {
     if (byteArray) return;
     const fetchMedia = async (): Promise<void> => {
       try {
-        const result = await fetch("/GothamCity.mp3");
+        const result = await fetch(`/${SOURCE_NAME}`);
         if (!result.ok) {
           throw new Error("Something went wrong");
         }
@@ -59,10 +71,12 @@ function useAudioSource() {
 
   const update = () => {
     // console.log("dataArray", dataArray);
-    if (!dataArray || !analyzerRef.current) return;
-    analyzerRef.current.getByteFrequencyData(dataArray.current as Uint8Array);
-    const orig = Array.from(dataArray.current as Uint8Array);
-    setRawData([[...orig].reverse(), orig].flat());
+    if (!dataArray.current || !analyzerRef.current) return;
+    analyzerRef.current.getByteFrequencyData(dataArray.current);
+    // const orig = Array.from(dataArray.current as Uint8Array);
+    const orig = [...dataArray.current];
+    setRawData(orig);
+    // setRawData([[...orig].reverse(), orig].flat());
   };
 
   const { handleToggleAnimation } = useRequestAnimationFrame(update);
