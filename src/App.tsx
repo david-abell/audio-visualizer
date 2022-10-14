@@ -1,11 +1,11 @@
 import "./App.css";
-import RadialGraph from "./RadialGraph";
+import SpectrumGraph from "./SpectrumGraph";
 
 function App() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return (
     <div className="App">
-      <RadialGraph />
+      <SpectrumGraph />
     </div>
   );
 }

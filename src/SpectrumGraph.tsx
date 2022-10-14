@@ -35,7 +35,7 @@ function getLinePaths(data: RawData): Path[] {
   return result;
 }
 
-function RadialGraph() {
+function SpectrumGraph() {
   const { handlePlay, rawData } = useAudioSource();
 
   const paths = useMemo<Path[]>(() => getLinePaths(rawData), [rawData]);
@@ -69,4 +69,4 @@ function RadialGraph() {
   );
 }
 
-export default RadialGraph;
+export default SpectrumGraph;
