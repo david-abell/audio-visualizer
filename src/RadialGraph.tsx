@@ -1,30 +1,36 @@
-import { arc, interpolateRainbow } from "d3";
-
+import { interpolateRainbow, line } from "d3";
+import { useMemo } from "react";
 import useAudioSource, { RawData } from "./useAudioSource";
 
-const arcBuilder = arc();
+const lineBuilder = line();
 
 interface Path {
   path: string;
   color: string;
+  amplitude: number;
 }
 
-function getPaths(data: RawData): Path[] {
+function getLinePaths(data: RawData): Path[] {
   const result: Path[] = [];
-  let currentAngle = 0;
+  let currentX = 100;
+  const range = 100;
+  const getY = (num: number) => num / 255;
+  const total = data.reduce((acc, val) => acc + val, 0);
 
   for (const value of data) {
-    const nextAngle = currentAngle + Math.PI * 0.1;
-    const path = arcBuilder({
-      startAngle: currentAngle,
-      endAngle: nextAngle,
-      innerRadius: 50 - (value / 255) * 35,
-      outerRadius: 50 + (value / 255) * 35,
-    });
-    if (path) {
-      result.push({ path, color: interpolateRainbow(value / 255) });
+    const amplitude = (value / total) * range;
+    const nextX = currentX - amplitude;
+
+    const y = getY(value) * amplitude * 1000;
+    const color = y ? interpolateRainbow(value / 255) : "rgb(0, 0, 0, 0)";
+    const path = lineBuilder([
+      [currentX, 100],
+      [currentX, amplitude * 100],
+    ]);
+    if (amplitude > 0.15 && path) {
+      result.push({ path, color, amplitude });
     }
-    currentAngle = nextAngle;
+    currentX = nextX;
   }
   return result;
 }
@@ -32,7 +38,7 @@ function getPaths(data: RawData): Path[] {
 function RadialGraph() {
   const { handlePlay, rawData } = useAudioSource();
 
-  const paths = getPaths(rawData);
+  const paths = useMemo<Path[]>(() => getLinePaths(rawData), [rawData]);
 
   return (
     <button
@@ -44,12 +50,18 @@ function RadialGraph() {
       <svg
         width="100%"
         height="100%"
-        viewBox="-100 -100 200 200"
+        viewBox="0 0 100 100"
         preserveAspectRatio="xMidYMid meet"
       >
         <g>
-          {paths.map(({ path, color }) => (
-            <path d={path} fill={color} key={`${path}${color}`} />
+          {paths.map(({ path, color, amplitude }, index) => (
+            <path
+              d={path}
+              stroke={color}
+              strokeWidth={amplitude}
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${path}${color}${index}`}
+            />
           ))}
         </g>
       </svg>
