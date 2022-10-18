@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect, useState } from "react";
+import { useRef, useLayoutEffect, useState, useCallback } from "react";
 
 const useRequestAnimationFrame = (callback: () => void) => {
   const [toggleAnimation, setToggleAnimation] = useState(false);
@@ -14,9 +14,18 @@ const useRequestAnimationFrame = (callback: () => void) => {
     requestRef.current = requestAnimationFrame(animate);
   };
 
-  const handleToggleAnimation = () => {
-    setToggleAnimation((prev) => !prev);
-  };
+  // const handleToggleAnimation = () => {
+  //   setToggleAnimation((prev) => !prev);
+  // };
+
+  const handleStopAnimation = useCallback(
+    () => setToggleAnimation(() => false),
+    []
+  );
+  const handleStartAnimation = useCallback(
+    () => setToggleAnimation(() => true),
+    []
+  );
 
   useLayoutEffect(() => {
     if (!callback || !toggleAnimation) return undefined;
@@ -27,7 +36,10 @@ const useRequestAnimationFrame = (callback: () => void) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toggleAnimation]);
 
-  return { handleToggleAnimation };
+  return {
+    handleStopAnimation,
+    handleStartAnimation,
+  };
 };
 
 export default useRequestAnimationFrame;

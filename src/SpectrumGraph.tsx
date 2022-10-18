@@ -1,52 +1,77 @@
-import { interpolateRainbow, line } from "d3";
-import { useMemo } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import styles from "./SpectrumGraph.module.css";
-import useAudioSource, { RawData } from "./useAudioSource";
+// import useAudioSource from "./useAudioSource";
+import { AudioRef, RawData, LinePath } from "./types/types";
+import useRequestAnimationFrame from "./useRequestAnimationFrame";
+import getLinePaths from "./utils/getLinePaths";
 
-const lineBuilder = line();
-
-interface Path {
-  path: string;
-  color: string;
-  amplitude: number;
+interface Props {
+  audioRef: AudioRef;
 }
-function getLinePaths(data: RawData): Path[] {
-  const result: Path[] = [];
-  let currentX = 100;
-  const range = 100;
-  const getY = (num: number) => num / 255;
-  const total = data.reduce((acc, val) => acc + val, 0);
 
-  for (const value of data) {
-    const amplitude = (value / total) * range;
-    const nextX = currentX - amplitude;
+function SpectrumGraph({ audioRef }: Props) {
+  const [rawData, setRawData] = useState<RawData>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isError, setIsError] = useState<false | string>(false);
 
-    const y = getY(value) * amplitude * 1000;
-    const color = y ? interpolateRainbow(value / 255) : "rgb(0, 0, 0, 0)";
-    const path = lineBuilder([
-      [currentX, 100],
-      [currentX, amplitude * 100],
-    ]);
-    if (amplitude > 0.15 && path) {
-      result.push({ path, color, amplitude });
-    }
-    currentX = nextX;
+  const audioContextRef = useRef<AudioContext | undefined>();
+  const sourceRef = useRef<MediaElementAudioSourceNode | undefined>();
+  const analyzerRef = useRef<AnalyserNode | undefined>();
+
+  const bufferLength = useRef<number | undefined>();
+  const dataArray = useRef<Uint8Array | undefined>();
+
+  const initContext = async () => {
+    if (!audioRef.current || audioContextRef.current) return;
+    audioContextRef.current = new AudioContext();
+
+    analyzerRef.current = audioContextRef.current.createAnalyser();
+    sourceRef.current = audioContextRef.current.createMediaElementSource(
+      audioRef.current
+    );
+
+    analyzerRef.current.fftSize = 512;
+    bufferLength.current = analyzerRef.current.frequencyBinCount;
+    dataArray.current = new Uint8Array(bufferLength.current);
+
+    sourceRef.current
+      ?.connect(analyzerRef.current)
+      .connect(audioContextRef.current.destination);
+  };
+
+  const update = () => {
+    if (!dataArray.current || !analyzerRef.current) return;
+    analyzerRef.current.getByteFrequencyData(dataArray.current);
+    const orig = [...dataArray.current];
+    setRawData(orig);
+  };
+
+  const { handleStartAnimation, handleStopAnimation } =
+    useRequestAnimationFrame(update);
+
+  if (!audioContextRef.current) {
+    initContext().catch((e) => setIsError(String(e)));
   }
-  return result;
-}
 
-function SpectrumGraph() {
-  const { handlePlay, rawData } = useAudioSource();
+  useEffect(() => {
+    const audioNode = audioRef.current;
+    if (!audioNode) return undefined;
 
-  const paths = useMemo<Path[]>(() => getLinePaths(rawData), [rawData]);
+    audioNode.addEventListener("pause", handleStopAnimation);
+    audioNode.addEventListener("play", handleStartAnimation);
+    audioNode.addEventListener("playing", handleStartAnimation);
+
+    return () => {
+      audioNode.removeEventListener("pause", handleStopAnimation);
+      audioNode.removeEventListener("play", handleStartAnimation);
+      audioNode.removeEventListener("playing", handleStartAnimation);
+    };
+  }, [handleStartAnimation, handleStopAnimation, audioRef]);
+
+  const paths = useMemo<LinePath[]>(() => getLinePaths(rawData), [rawData]);
 
   return (
-    <button
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      onClick={() => handlePlay()}
-      type="button"
-      className={styles.visualizerContainer}
-    >
+    <div className={styles.visualizerContainer}>
       <svg
         width="100%"
         height="100%"
@@ -65,7 +90,7 @@ function SpectrumGraph() {
           ))}
         </g>
       </svg>
-    </button>
+    </div>
   );
 }
 
