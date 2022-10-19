@@ -1,6 +1,6 @@
-# Project Name
-> Outline a brief description of your project.
-> Live demo [_here_](https://www.example.com). <!-- If you have the project hosted somewhere, include the link here. -->
+# React Audio visualizer
+> An audio player and live spectogram.
+> Live demo [_soon to be here_](https://www.example.com). <!-- If you have the project hosted somewhere, include the link here. -->
 
 ## Table of Contents
 * [General Info](#general-information)
@@ -26,9 +26,10 @@
 
 
 ## Technologies Used
-- Tech 1 - version 1.0
-- Tech 2 - version 2.0
-- Tech 3 - version 3.0
+- Vite.js
+- React.js
+- D3.js
+- Typescript
 
 
 ## Features
@@ -69,12 +70,12 @@ To do:
 
 ## Lessons learned
 Include unexpected issues / bugs encountered. How were they resolved?
-- Issue 1
+- Solid.js is by far the better choice for animating svgs in this manner. This runs at 18 fps or lower if trying just to duplicate the number of svg paths solid.js could handle at 60fps. 
 - Issue 2
 
 ## Acknowledgements
 Give credit here.
-- This project was inspired by...
+- This project was inspired by Jack Herrington's very cool [60FPS Solid-JS Audio Spectrum Visualizer Project](https://www.youtube.com/watch?v=Xt1dNdJpgw4)
 - This project was based on [this tutorial](https://www.example.com).
 - Many thanks to...
 
