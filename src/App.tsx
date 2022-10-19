@@ -4,6 +4,7 @@ import Player from "./components/Player";
 import SpectrumGraph from "./SpectrumGraph";
 
 const SOURCE_NAME = "GothamCity.mp3";
+// const SOURCE_NAME = "SailingAway.mp3";
 
 function App() {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -57,7 +58,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
+    <div className="app">
       <SpectrumGraph audioRef={audioRef} />
       <Player audioRef={audioRef} />
     </div>

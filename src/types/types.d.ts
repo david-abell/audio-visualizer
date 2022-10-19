@@ -4,5 +4,5 @@ export type RawData = number[];
 export interface LinePath {
   path: string;
   color: string;
-  amplitude: number;
+  width: number;
 }

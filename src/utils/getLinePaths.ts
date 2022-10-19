@@ -1,29 +1,38 @@
 import { interpolateRainbow, line } from "d3";
 import { RawData, LinePath } from "../types/types";
+import type { ViewBoxMap } from "../SpectrumGraph";
 
 const lineBuilder = line();
 
-function getLinePaths(data: RawData): LinePath[] {
+function getLinePaths(data: RawData, viewBox: ViewBoxMap): LinePath[] {
   const result: LinePath[] = [];
-  let currentX = 100;
-  const range = 100;
-  const getY = (num: number) => num / 255;
   const total = data.reduce((acc, val) => acc + val, 0);
 
-  for (const value of data) {
-    const amplitude = (value / total) * range;
-    const nextX = currentX - amplitude;
+  let currentX = viewBox.SVGMinX;
+  const xRange = viewBox.SVGWidth;
+  const yRange = viewBox.SVGHeight;
 
-    const y = getY(value) * amplitude * 1000;
-    const color = y ? interpolateRainbow(value / 255) : "rgb(0, 0, 0, 0)";
+  const padLineWidth = 0.2;
+
+  for (const value of data) {
+    const width = (value / total) * xRange;
+
+    const scaledValue = value / 255;
+
+    const barHeight = yRange * scaledValue;
+
+    const color = scaledValue
+      ? interpolateRainbow(scaledValue)
+      : "rgb(0, 0, 0, 0)";
+
     const path = lineBuilder([
-      [currentX, 100],
-      [currentX, amplitude * 100],
+      [currentX, viewBox.SVGHeight],
+      [currentX, viewBox.SVGHeight - barHeight - 0.3 * viewBox.SVGHeight],
     ]);
-    if (amplitude > 0.15 && path) {
-      result.push({ path, color, amplitude });
+    if (!Number.isNaN(width) && path) {
+      result.push({ path, color, width: width + padLineWidth });
     }
-    currentX = nextX;
+    currentX += width;
   }
   return result;
 }

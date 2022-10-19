@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import styles from "./SpectrumGraph.module.css";
 // import useAudioSource from "./useAudioSource";
 import { AudioRef, RawData, LinePath } from "./types/types";
@@ -8,6 +8,16 @@ import getLinePaths from "./utils/getLinePaths";
 interface Props {
   audioRef: AudioRef;
 }
+
+const viewBoxMap = {
+  SVGMinX: -100,
+  SVGMinY: -20,
+  SVGWidth: 200, // 2x SVGMinX
+  SVGHeight: 40, // 2x SVGMinY
+};
+const svgViewbox = Object.values(viewBoxMap).join(" ");
+
+export type ViewBoxMap = typeof viewBoxMap;
 
 function SpectrumGraph({ audioRef }: Props) {
   const [rawData, setRawData] = useState<RawData>([]);
@@ -30,21 +40,21 @@ function SpectrumGraph({ audioRef }: Props) {
       audioRef.current
     );
 
-    analyzerRef.current.fftSize = 512;
+    analyzerRef.current.fftSize = 256;
     bufferLength.current = analyzerRef.current.frequencyBinCount;
     dataArray.current = new Uint8Array(bufferLength.current);
 
-    sourceRef.current
-      ?.connect(analyzerRef.current)
-      .connect(audioContextRef.current.destination);
+    sourceRef.current.connect(analyzerRef.current);
+    analyzerRef.current.connect(audioContextRef.current.destination);
   };
 
-  const update = () => {
+  const update = useCallback(() => {
     if (!dataArray.current || !analyzerRef.current) return;
     analyzerRef.current.getByteFrequencyData(dataArray.current);
-    const orig = [...dataArray.current];
-    setRawData(orig);
-  };
+    // const orig = [...dataArray.current];
+    // setRawData(orig);
+    setRawData([...dataArray.current]);
+  }, []);
 
   const { handleStartAnimation, handleStopAnimation } =
     useRequestAnimationFrame(update);
@@ -68,22 +78,25 @@ function SpectrumGraph({ audioRef }: Props) {
     };
   }, [handleStartAnimation, handleStopAnimation, audioRef]);
 
-  const paths = useMemo<LinePath[]>(() => getLinePaths(rawData), [rawData]);
+  const paths = useMemo<LinePath[]>(
+    () => getLinePaths(rawData, viewBoxMap),
+    [rawData]
+  );
 
   return (
     <div className={styles.visualizerContainer}>
       <svg
         width="100%"
         height="100%"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="xMidYMid meet"
+        viewBox={svgViewbox}
+        preserveAspectRatio="none"
       >
         <g>
-          {paths.map(({ path, color, amplitude }, index) => (
+          {paths.map(({ path, color, width }, index) => (
             <path
               d={path}
               stroke={color}
-              strokeWidth={amplitude}
+              strokeWidth={width}
               // eslint-disable-next-line react/no-array-index-key
               key={`${path}${color}${index}`}
             />

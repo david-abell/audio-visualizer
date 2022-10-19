@@ -13,6 +13,11 @@
   text-size-adjust: 100%;
 }
 
+#root {
+  width: 100%;
+  padding: 2rem;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
