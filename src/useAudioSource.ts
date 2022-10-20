@@ -1,106 +1,60 @@
-import { useState, useEffect, useRef } from "react";
-import useRequestAnimationFrame from "./useRequestAnimationFrame";
+import { useEffect, useRef } from "react";
+import type { Track } from "./types/types";
 
 export type RawData = number[];
 
-function useAudioSource() {
-  const [rawData, setRawData] = useState<RawData>([]);
-  const [byteArray, setByteArray] = useState<ArrayBuffer>();
-  const [isError, setIsError] = useState<false | string>(false);
+function useAudioSource(track: Track) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const sourceRef = useRef<MediaSource>();
 
-  const audioContextRef = useRef<AudioContext | undefined>();
-  const audioBufferRef = useRef<AudioBuffer | null>(null);
-  const gainRef = useRef<GainNode | undefined>();
-  const sourceRef = useRef<AudioBufferSourceNode | undefined>();
-
-  const analyzerRef = useRef<AnalyserNode | undefined>();
-
-  const bufferLength = useRef<number | undefined>();
-  const dataArray = useRef<Uint8Array | undefined>();
-
-  const initContext = async () => {
-    if (!byteArray || sourceRef.current) return;
-    audioContextRef.current = new AudioContext();
-    gainRef.current = audioContextRef.current.createGain();
-    analyzerRef.current = audioContextRef.current.createAnalyser();
-    sourceRef.current = audioContextRef.current.createBufferSource();
-
-    audioBufferRef.current = await audioContextRef.current.decodeAudioData(
-      byteArray
-    );
-    analyzerRef.current.fftSize = 512;
-    sourceRef.current.buffer = audioBufferRef.current;
-    gainRef.current.gain.value = 0.4;
-
-    bufferLength.current = analyzerRef.current.frequencyBinCount;
-    dataArray.current = new Uint8Array(bufferLength.current);
-    sourceRef.current.loop = true;
-
-    sourceRef.current
-      .connect(analyzerRef.current)
-      .connect(gainRef.current)
-      .connect(audioContextRef.current.destination);
-
-    sourceRef.current.start();
-  };
-
-  const SOURCE_NAME = "SailingAway.mp3";
-  // const SOURCE_NAME = "GothamCity.mp3";
-
-  // fetch media
   useEffect(() => {
-    if (byteArray) return;
-    const fetchMedia = async (): Promise<void> => {
-      try {
-        const result = await fetch(`/${SOURCE_NAME}`);
-        if (!result.ok) {
-          throw new Error("Something went wrong");
+    const mimeCodec = "audio/mpeg";
+    if (audioRef.current && MediaSource.isTypeSupported(mimeCodec)) {
+      sourceRef.current = new MediaSource();
+      const url = URL.createObjectURL(sourceRef.current);
+
+      audioRef.current.src = url;
+
+      const fetchArrayBuffer = async (): Promise<ArrayBuffer | undefined> => {
+        try {
+          const result = await fetch(`/${track.url}`);
+          if (!result.ok) {
+            throw new Error("Something went wrong");
+          }
+          const resultBuffer = await result.arrayBuffer();
+
+          return resultBuffer;
+        } catch (error) {
+          let message = "Unknown Error";
+          if (error instanceof Error) message = error.message;
+          // eslint-disable-next-line no-console
+          console.log(message);
+          return undefined;
         }
-        const resultByteArray = await result.arrayBuffer();
-        setByteArray(resultByteArray);
-      } catch (error) {
-        let message = "Unknown Error";
-        if (error instanceof Error) message = error.message;
-        setIsError(message);
-      }
-    };
-    // Floating promise expected here
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    fetchMedia();
-  }, [byteArray]);
+      };
 
-  const update = () => {
-    // console.log("dataArray", dataArray);
-    if (!dataArray.current || !analyzerRef.current) return;
-    analyzerRef.current.getByteFrequencyData(dataArray.current);
-    // const orig = Array.from(dataArray.current as Uint8Array);
-    const orig = [...dataArray.current];
-    setRawData(orig);
-    // setRawData([[...orig].reverse(), orig].flat());
-  };
+      sourceRef.current.addEventListener("sourceopen", () => {
+        const sourceBuffer = sourceRef.current?.addSourceBuffer(mimeCodec);
+        // eslint-disable-next-line no-console
+        sourceBuffer?.addEventListener("error", console.log);
 
-  const { handleToggleAnimation } = useRequestAnimationFrame(update);
-
-  const handlePlay = async () => {
-    if (!audioContextRef.current) {
-      await initContext();
-    } else if (audioContextRef.current.state === "running") {
-      audioContextRef.current
-        .suspend()
-        .catch(() =>
-          setIsError("there was an error while attempting to pause")
-        );
-    } else {
-      audioContextRef.current
-        .resume()
-        .catch(() =>
-          setIsError("there was an error while attempting to resume")
-        );
+        fetchArrayBuffer()
+          .then((data) => {
+            if (!data || !sourceBuffer) {
+              return undefined;
+            }
+            sourceBuffer.addEventListener("updateend", () => {
+              sourceRef.current?.endOfStream();
+            });
+            return sourceBuffer.appendBuffer(data);
+          })
+          // eslint-disable-next-line no-console
+          .catch((e) => console.log(e));
+      });
     }
-    handleToggleAnimation();
-  };
+  }, [track]);
 
-  return { handlePlay, rawData, isError };
+  return { sourceRef, audioRef };
 }
 
 export default useAudioSource;
