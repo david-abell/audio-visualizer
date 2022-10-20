@@ -1,66 +1,27 @@
-import { useRef, useEffect } from "react";
+import { useState } from "react";
 import "./App.css";
 import Player from "./components/Player";
-import SpectrumGraph from "./SpectrumGraph";
-
-const SOURCE_NAME = "GothamCity.mp3";
-// const SOURCE_NAME = "SailingAway.mp3";
+import SpectrumGraph from "./components/SpectrumGraph";
+import { Track } from "./types/types";
+import useAudioSource from "./useAudioSource";
+import library from "./assets/library";
 
 function App() {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const sourceRef = useRef<MediaSource>();
-
-  useEffect(() => {
-    const mimeCodec = "audio/mpeg";
-    if (audioRef.current && MediaSource.isTypeSupported(mimeCodec)) {
-      sourceRef.current = new MediaSource();
-      const url = URL.createObjectURL(sourceRef.current);
-
-      audioRef.current.src = url;
-
-      const fetchArrayBuffer = async (): Promise<ArrayBuffer | undefined> => {
-        try {
-          const result = await fetch(`/${SOURCE_NAME}`);
-          if (!result.ok) {
-            throw new Error("Something went wrong");
-          }
-          const resultBuffer = await result.arrayBuffer();
-
-          return resultBuffer;
-        } catch (error) {
-          let message = "Unknown Error";
-          if (error instanceof Error) message = error.message;
-          // eslint-disable-next-line no-console
-          console.log(message);
-          return undefined;
-        }
-      };
-
-      sourceRef.current.addEventListener("sourceopen", () => {
-        const sourceBuffer = sourceRef.current?.addSourceBuffer(mimeCodec);
-        // eslint-disable-next-line no-console
-        sourceBuffer?.addEventListener("error", console.log);
-
-        fetchArrayBuffer()
-          .then((data) => {
-            if (!data || !sourceBuffer) {
-              return undefined;
-            }
-            sourceBuffer.addEventListener("updateend", () => {
-              sourceRef.current?.endOfStream();
-            });
-            return sourceBuffer.appendBuffer(data);
-          })
-          // eslint-disable-next-line no-console
-          .catch((e) => console.log(e));
-      });
-    }
-  }, []);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [tracks, setTracks] = useState<Track[]>(library);
+  const [currentTrack, setCurrentTrack] = useState(0);
+  const { audioRef } = useAudioSource(tracks[currentTrack]);
 
   return (
     <div className="app">
+      <img src={tracks[currentTrack].cover} alt="Album cover" />
       <SpectrumGraph audioRef={audioRef} />
-      <Player audioRef={audioRef} />
+      <Player
+        audioRef={audioRef}
+        setCurrentTrack={setCurrentTrack}
+        tracks={tracks}
+        currentTrack={currentTrack}
+      />
     </div>
   );
 }

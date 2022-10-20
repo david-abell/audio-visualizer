@@ -1,20 +1,49 @@
-import { useState } from "react";
-import { AudioRef } from "../types/types";
-
-const SOURCE_NAME = "GothamCity.mp3";
+import { AudioRef, Track } from "../types/types";
+import styleUtils from "../styles/styleUtils.module.css";
 
 interface Props {
+  currentTrack: number;
+  setCurrentTrack: React.Dispatch<React.SetStateAction<number>>;
+  tracks: Track[];
   audioRef: AudioRef;
 }
 
-function Player({ audioRef }: Props) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [currentTrack, setCurrentTrack] = useState(SOURCE_NAME);
+function Player({ audioRef, currentTrack, setCurrentTrack, tracks }: Props) {
+  const handleNextTrack = () => {
+    setCurrentTrack(1);
+  };
+  const handlePreviousTrack = () => {
+    setCurrentTrack(0);
+  };
 
   return (
-    <audio controls src={`/${currentTrack}`} ref={audioRef} preload="metadata">
-      <track kind="captions" />
-    </audio>
+    <div>
+      <audio
+        controls
+        src={`/${tracks[currentTrack].url}`}
+        ref={audioRef}
+        preload="metadata"
+      >
+        <track kind="captions" />
+      </audio>
+      <div className={styleUtils.flex}>
+        <button
+          onClick={handlePreviousTrack}
+          type="button"
+          disabled={Boolean(currentTrack === 0)}
+        >
+          Previous Track
+        </button>
+        <p>Now Playing: {tracks[currentTrack].title}</p>
+        <button
+          onClick={handleNextTrack}
+          type="button"
+          disabled={Boolean(currentTrack === tracks.length - 1)}
+        >
+          Next Track
+        </button>
+      </div>
+    </div>
   );
 }
 

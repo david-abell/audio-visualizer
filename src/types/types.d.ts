@@ -6,3 +6,11 @@ export interface LinePath {
   color: string;
   width: number;
 }
+
+// export type Track = string;
+export interface Track {
+  title: string;
+  cover: string;
+  artist: string;
+  url: string;
+}
