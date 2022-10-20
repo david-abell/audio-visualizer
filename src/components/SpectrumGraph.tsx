@@ -1,19 +1,18 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import styles from "./SpectrumGraph.module.css";
-// import useAudioSource from "./useAudioSource";
-import { AudioRef, RawData, LinePath } from "./types/types";
-import useRequestAnimationFrame from "./useRequestAnimationFrame";
-import getLinePaths from "./utils/getLinePaths";
+import styles from "../styles/SpectrumGraph.module.css";
+import { AudioRef, RawData, LinePath } from "../types/types";
+import useRequestAnimationFrame from "../useRequestAnimationFrame";
+import getLinePaths from "../utils/getLinePaths";
 
 interface Props {
   audioRef: AudioRef;
 }
 
 const viewBoxMap = {
-  SVGMinX: -100,
-  SVGMinY: -20,
+  SVGMinX: 0,
+  SVGMinY: 0,
   SVGWidth: 200, // 2x SVGMinX
-  SVGHeight: 40, // 2x SVGMinY
+  SVGHeight: 10, // 2x SVGMinY
 };
 const svgViewbox = Object.values(viewBoxMap).join(" ");
 
