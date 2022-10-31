@@ -10,6 +10,7 @@ function App() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tracks, setTracks] = useState<Track[]>(library);
   const [currentTrack, setCurrentTrack] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const { audioRef } = useAudioSource(tracks[currentTrack]);
 
   return (
@@ -21,6 +22,8 @@ function App() {
         setCurrentTrack={setCurrentTrack}
         tracks={tracks}
         currentTrack={currentTrack}
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
       />
     </div>
   );

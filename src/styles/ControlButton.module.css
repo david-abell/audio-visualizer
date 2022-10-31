@@ -1,0 +1,16 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: 0.5rem;
+}
+
+.button span {
+  margin-inline-start: 1rem;
+  min-width: 4rem;
+}
+
+.button svg {
+  height: 2.8rem;
+  width: auto;
+}
