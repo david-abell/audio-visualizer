@@ -91,13 +91,12 @@ function SpectrumGraph({ audioRef }: Props) {
         preserveAspectRatio="none"
       >
         <g>
-          {paths.map(({ path, color, width }, index) => (
+          {paths.map(({ path, color, width }) => (
             <path
               d={path}
               stroke={color}
               strokeWidth={width}
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${path}${color}${index}`}
+              key={`${path}${color}`}
             />
           ))}
         </g>
