@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./App.css";
+import styleUtils from "./styles/styleUtils.module.css";
 import Player from "./components/Player";
 import SpectrumGraph from "./components/SpectrumGraph";
 import { Track } from "./types/types";
@@ -14,7 +15,7 @@ function App() {
   const { audioRef } = useAudioSource(tracks[currentTrack]);
 
   return (
-    <div className="app">
+    <div className={["app", styleUtils.gap].join(" ")}>
       <img src={tracks[currentTrack].cover} alt="Album cover" />
       <SpectrumGraph audioRef={audioRef} />
       <Player

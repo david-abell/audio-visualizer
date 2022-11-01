@@ -1,8 +1,18 @@
 .flex {
   display: flex;
-  gap: 1rem;
 }
 
 .flex-col {
+  display: flex;
   flex-direction: column;
+}
+
+.gap {
+  gap: 1rem;
+}
+
+.full-width {
+  /* display: flex; */
+  width: 100%;
+  max-width: 95vw;
 }

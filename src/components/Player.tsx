@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
 import { AudioRef, Track } from "../types/types";
 import styleUtils from "../styles/styleUtils.module.css";
+import styles from "../styles/Player.module.css";
 import ControlButton from "./ControlButton";
 
 interface Props {
@@ -25,6 +26,7 @@ function Player({
 }: Props) {
   const [trackProgress, setTrackProgress] = useState(0);
   const trackProgressIntervalRef = useRef<number | undefined>();
+  const trackProgressRangeRef = useRef<HTMLInputElement>(null);
 
   const startProgressTimer = useCallback(() => {
     clearInterval(trackProgressIntervalRef.current);
@@ -32,7 +34,7 @@ function Player({
       if (audioRef.current) {
         setTrackProgress(audioRef.current.currentTime);
       }
-    }, 1000);
+    });
   }, [audioRef]);
 
   useEffect(() => {
@@ -85,14 +87,45 @@ function Player({
     []
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const updateRangeProgress = (value: string) => {
+    const rangeNode = trackProgressRangeRef.current;
+    if (!rangeNode) return;
+
+    const { min, max } = rangeNode;
+    const gradientValue =
+      (Number(value) - Number(min)) / (Number(max) - Number(min));
+    console.log("gradientValue", gradientValue);
+    if (Number.isNaN(gradientValue)) return;
+    rangeNode.style.backgroundImage = `linear-gradient(to right, green ${gradientValue}%, #fff ${gradientValue}%)`;
+    // rangeNode.style.background = [
+    //   "linear-gradient(",
+    //   "linear, ",
+    //   "left top, ",
+    //   "right top, ",
+    //   `color-stop(${String(gradientValue)}, blue), `,
+    //   `color-stop(${String(gradientValue)}, red), `,
+    //   ")",
+    // ].join("");
+    console.log(rangeNode.style.backgroundImage);
+  };
+
   const handleTrackProgress = (value: string) => {
     clearInterval(trackProgressIntervalRef.current);
-    setTrackProgress(Number(value));
-    debouncedSetCurrentTime(value);
+    const nextValue = Number.isNaN(Number(value)) ? "0" : value;
+    setTrackProgress(Number(nextValue));
+    // updateRangeProgress(value);
+    debouncedSetCurrentTime(nextValue);
   };
 
   return (
-    <div>
+    <div
+      className={[
+        styleUtils.fullWidth,
+        styleUtils.flexCol,
+        styleUtils.gap,
+      ].join(" ")}
+    >
       <audio
         // controls
         onLoadedData={handleAutoPlay}
@@ -103,7 +136,24 @@ function Player({
       >
         <track kind="captions" />
       </audio>
-      <div className={styleUtils.flex}>
+      <div className={styleUtils.fullWidth}>
+        <input
+          type="range"
+          min="0"
+          max={audioRef.current ? audioRef.current.duration : "0"}
+          value={trackProgress}
+          onChange={(e) => handleTrackProgress(e.target.value)}
+          className={styles.rangeSlider}
+          step="any"
+          ref={trackProgressRangeRef}
+        />
+      </div>
+
+      <div
+        className={[styleUtils.fullWidth, styleUtils.flex, styleUtils.gap].join(
+          " "
+        )}
+      >
         <ControlButton
           handler={handlePlay}
           action={isPlaying ? "Pause" : "Play"}
@@ -119,13 +169,6 @@ function Player({
           action="Next"
         />
         <p>Now Playing: {tracks[currentTrack].title}</p>
-        <input
-          type="range"
-          min="0"
-          max={audioRef.current?.duration}
-          value={trackProgress}
-          onChange={(e) => handleTrackProgress(e.target.value)}
-        />
       </div>
     </div>
   );
