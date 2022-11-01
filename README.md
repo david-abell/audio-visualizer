@@ -79,14 +79,13 @@ To do:
 Include unexpected issues / bugs encountered. How were they resolved?
 
 - Solid.js is by far the better choice for animating svgs in this manner. This runs at 18 fps or lower if trying just to duplicate the number of svg paths solid.js could handle at 60fps.
-- Styling range sliders with a before current value color and after current value color is a non trivial problem. Cross browser consistency of pseudo elements is lacking [see csswg-drafts: [css-pseudo-4] Standardizing input[type="range"] styling #4410](https://github.com/w3c/csswg-drafts/issues/4410)
+- Styling range sliders with a before current value color and after current value color is a non trivial problem. Cross browser consistency of pseudo elements is lacking [This stack overflow answer was very helpful](https://stackoverflow.com/a/66802544/19766980)
 
 ## Acknowledgements
 
 Give credit here.
 
 - This project was inspired by Jack Herrington's very cool [60FPS Solid-JS Audio Spectrum Visualizer Project](https://www.youtube.com/watch?v=Xt1dNdJpgw4)
-- This project was based on [this tutorial](https://www.example.com).
 - Many thanks to...
 
 ## Contact

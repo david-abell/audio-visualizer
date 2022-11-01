@@ -11,88 +11,123 @@
   appearance: none;
   cursor: pointer;
   flex-grow: 1;
-
-  /* color is for slider progress */
-  color: #f07167;
 }
 
-input::-webkit-slider-runnable-track {
-  background: #fff;
-  height: 100%;
-}
-
-input[type="range"]::-webkit-slider-runnable-track {
-  --track-height: 8px;
-
-  /* background: linear-gradient(green 0 0) scroll no-repeat center / 100%
-    calc(var(--track-height) + 1px); */
-}
-
-input::-moz-range-track {
-  background: #fff;
-  height: 100%;
-}
-
-input::-moz-range-progress {
-  height: 100%;
-
-  /* background: linear-gradient(to right, green 100%, #fff 100%); */
-
-  background: linear-gradient(
+input[type="range"] {
+  --value: 0;
+  --min: 0;
+  --max: 100;
+  --range: calc(var(--max) - var(--min));
+  --ratio: calc((var(--value) - var(--min)) / var(--range));
+  --sx: calc(0.5 * 10px + var(--ratio) * (100% - 10px));
+  --thumb-width: 6px;
+  --thumb-height: 22px;
+  --slider-height: 6px;
+  --color-background: #efefef;
+  --color-active: #f00;
+  --color-gradient: linear-gradient(
     45deg,
     rgba(59 173 227 / 100%) 0%,
     rgba(87 111 230 / 100%) 25%,
     rgba(152 68 183 / 100%) 51%,
     rgba(255 53 127 / 100%) 100%
   );
+  --split-gradient: var(--color-gradient) 0 / var(--sx) 100% no-repeat,
+    var(--color-background);
+  --color-background-split-gradient: linear-gradient(
+        var(--color-active),
+        var(--color-active)
+      )
+      0 / var(--sx) 100% no-repeat,
+    #e5e5e5;
+
+  height: var(--slider-height);
+  appearance: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: var(--thumb-width);
+  height: var(--thumb-height);
+  border-radius: 5px;
+  background: var(--color-active);
+  border: none;
+  margin-top: calc(var(--slider-height) * 0.5 - var(--thumb-height) * 0.5);
 }
 
 input[type="range"]::-moz-range-thumb {
   appearance: none;
-  cursor: grab;
-  background-color: red;
-  height: 100%;
+  width: var(--thumb-width);
+  height: var(--thumb-height);
+  border-radius: 5px;
+  background: var(--color-active);
   border: none;
-  border-radius: 0;
-  width: 4px;
+  margin-top: calc(var(--slider-height) * 0.5 - var(--thumb-height) * 0.5);
 }
 
-input[type="range"]::-webkit-slider-thumb {
-  --track-height: 8px;
-  --thumb-height: 1.375rem;
-  --thumb-width: 0.5rem;
+input[type="range"]::-webkit-slider-runnable-track {
+  height: var(--slider-height);
+  border-radius: 5px;
+  background: var(--split-gradient);
 
-  appearance: none;
-  cursor: grab;
+  /* solid color alternative */
 
-  /* background-color: red; */
-  background: linear-gradient(red 0 0) scroll no-repeat left center / 50%
-    calc(var(--track-height) + 1px);
-  height: 100%;
-  width: 4px;
+  /* background: linear-gradient(#f80b00, #f80b00) 0 / var(--sx) 100% no-repeat,
+    var(--color-background); */
+  border: none;
+  box-shadow: none;
+}
 
-  /* box-shadow: calc(-100vmax - var(--thumb-width, var(--thumb-height))) 0 0
-    100vmax currentcolor; */
+input[type="range"]::-moz-range-track {
+  height: var(--slider-height);
+  border-radius: 5px;
+  background: var(--color-background);
+  border: none;
+  box-shadow: none;
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  background: var(--color-active);
+}
+
+input[type="range"]::-moz-range-thumb:active {
+  background: var(--color-active);
+}
+
+input[type="range"]::-moz-range-progress {
+  background: var(--color-gradient);
+  height: var(--slider-height);
+}
+
+input[type="range"]:hover {
+  transform: scaleY(1.5);
+}
+
+input[type="range"]::-webkit-slider-runnable-track:hover {
+  background: var(--color-background-split-gradient);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: var(--color-active);
 }
 
 input[type="range"]:focus {
   outline: none;
 }
 
-input[type="range"]:focus::-webkit-slider-thumb {
-  border: 1px solid #053a5f;
-  outline: 3px solid #053a5f;
+input[type="range"]:focus-visible::-webkit-slider-thumb {
+  border: 1px solid black;
+  outline: 3px solid black;
   outline-offset: 0.125rem;
 }
 
-input[type="range"]:focus::-moz-range-thumb {
-  border: 1px solid #053a5f;
-  outline: 3px solid #053a5f;
+input[type="range"]:focus-visible::-moz-range-thumb {
+  border: 1px solid black;
+  outline: 3px solid black;
   outline-offset: 0.125rem;
 }
 
-input[type="range"]:active::-webkit-slider-thumb,
-input[type="range"]:active::-webkit-slider-runnable-track,
 .range-slider:hover:active {
   cursor: grabbing;
 }

@@ -28,14 +28,29 @@ function Player({
   const trackProgressIntervalRef = useRef<number | undefined>();
   const trackProgressRangeRef = useRef<HTMLInputElement>(null);
 
+  const updateRangeRefStyle = useCallback(
+    (value: number) => {
+      const rangeNode = trackProgressRangeRef.current;
+      if (!rangeNode || !audioRef.current) return;
+      const { duration } = audioRef.current;
+      if (!Number.isFinite(duration)) return;
+
+      rangeNode.style.setProperty("--value", String(value));
+      rangeNode.style.setProperty("--max", String(duration));
+    },
+
+    [audioRef]
+  );
+
   const startProgressTimer = useCallback(() => {
     clearInterval(trackProgressIntervalRef.current);
     trackProgressIntervalRef.current = setInterval(() => {
       if (audioRef.current) {
+        updateRangeRefStyle(audioRef.current.currentTime);
         setTrackProgress(audioRef.current.currentTime);
       }
     });
-  }, [audioRef]);
+  }, [audioRef, updateRangeRefStyle]);
 
   useEffect(() => {
     if (isPlaying && audioRef.current) {
@@ -75,46 +90,27 @@ function Player({
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSetCurrentTime = useCallback(
-    debounce((value) => {
+    debounce((value: number) => {
       if (!audioRef.current) return;
       // eslint-disable-next-line no-param-reassign
-      audioRef.current.currentTime = Number(value);
+      audioRef.current.currentTime = value;
+
       if (!isPlaying) {
         audioRef.current.play().catch(() => undefined);
         setIsPlaying(true);
+        startProgressTimer();
       }
     }, 200),
     []
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const updateRangeProgress = (value: string) => {
-    const rangeNode = trackProgressRangeRef.current;
-    if (!rangeNode) return;
-
-    const { min, max } = rangeNode;
-    const gradientValue =
-      (Number(value) - Number(min)) / (Number(max) - Number(min));
-    console.log("gradientValue", gradientValue);
-    if (Number.isNaN(gradientValue)) return;
-    rangeNode.style.backgroundImage = `linear-gradient(to right, green ${gradientValue}%, #fff ${gradientValue}%)`;
-    // rangeNode.style.background = [
-    //   "linear-gradient(",
-    //   "linear, ",
-    //   "left top, ",
-    //   "right top, ",
-    //   `color-stop(${String(gradientValue)}, blue), `,
-    //   `color-stop(${String(gradientValue)}, red), `,
-    //   ")",
-    // ].join("");
-    console.log(rangeNode.style.backgroundImage);
-  };
-
-  const handleTrackProgress = (value: string) => {
+  const handleTrackProgress = (value: number) => {
     clearInterval(trackProgressIntervalRef.current);
-    const nextValue = Number.isNaN(Number(value)) ? "0" : value;
-    setTrackProgress(Number(nextValue));
-    // updateRangeProgress(value);
+
+    const nextValue =
+      Number.isNaN(value) || !Number.isFinite(value) ? 0 : value;
+    updateRangeRefStyle(nextValue);
+    setTrackProgress(nextValue);
     debouncedSetCurrentTime(nextValue);
   };
 
@@ -140,9 +136,13 @@ function Player({
         <input
           type="range"
           min="0"
-          max={audioRef.current ? audioRef.current.duration : "0"}
+          max={
+            audioRef.current && Number.isFinite(audioRef.current.duration)
+              ? audioRef.current.duration
+              : "100"
+          }
           value={trackProgress}
-          onChange={(e) => handleTrackProgress(e.target.value)}
+          onChange={(e) => handleTrackProgress(Number(e.target.value))}
           className={styles.rangeSlider}
           step="any"
           ref={trackProgressRangeRef}
