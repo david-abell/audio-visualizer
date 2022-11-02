@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./App.css";
+import styles from "./App.module.css";
 import styleUtils from "./styles/styleUtils.module.css";
 import Player from "./components/Player";
 import SpectrumGraph from "./components/SpectrumGraph";
@@ -15,17 +15,19 @@ function App() {
   const { audioRef } = useAudioSource(tracks[currentTrack]);
 
   return (
-    <div className={["app", styleUtils.gap].join(" ")}>
+    <div className={[styles.app, styleUtils.gap].join(" ")}>
       <img src={tracks[currentTrack].cover} alt="Album cover" />
-      <SpectrumGraph audioRef={audioRef} />
-      <Player
-        audioRef={audioRef}
-        setCurrentTrack={setCurrentTrack}
-        tracks={tracks}
-        currentTrack={currentTrack}
-        isPlaying={isPlaying}
-        setIsPlaying={setIsPlaying}
-      />
+      <div className={styles.fixedBottom}>
+        <SpectrumGraph audioRef={audioRef} />
+        <Player
+          audioRef={audioRef}
+          setCurrentTrack={setCurrentTrack}
+          tracks={tracks}
+          currentTrack={currentTrack}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+        />
+      </div>
     </div>
   );
 }

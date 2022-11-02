@@ -1,0 +1,26 @@
+.app {
+  width: 100%;
+  min-height: 100vh;
+  border: 1px solid transparent;
+  outline: 1px solid transparent;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0 auto;
+  padding-block: 1rem;
+}
+
+@media only screen and (min-width: 768px) {
+  .app {
+    padding-block: 2rem;
+  }
+}
+
+.fixed-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}

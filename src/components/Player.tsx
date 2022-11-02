@@ -4,6 +4,7 @@ import { AudioRef, Track } from "../types/types";
 import styleUtils from "../styles/styleUtils.module.css";
 import styles from "../styles/Player.module.css";
 import ControlButton from "./ControlButton";
+import formatTime from "../utils/formatTime";
 
 interface Props {
   currentTrack: number;
@@ -25,6 +26,7 @@ function Player({
   setIsPlaying,
 }: Props) {
   const [trackProgress, setTrackProgress] = useState(0);
+  const [trackLenth, setTrackLength] = useState(0);
   const trackProgressIntervalRef = useRef<number | undefined>();
   const trackProgressRangeRef = useRef<HTMLInputElement>(null);
 
@@ -62,6 +64,13 @@ function Player({
   const handleAutoPlay = () => {
     if (audioRef.current && isPlaying) {
       audioRef.current.play().catch(() => undefined);
+    }
+  };
+
+  const handleDurationChange = () => {
+    if (audioRef.current) {
+      const { duration } = audioRef.current;
+      setTrackLength(Number.isFinite(duration) ? duration : 0);
     }
   };
 
@@ -107,23 +116,18 @@ function Player({
   const handleTrackProgress = (value: number) => {
     clearInterval(trackProgressIntervalRef.current);
 
-    const nextValue =
-      Number.isNaN(value) || !Number.isFinite(value) ? 0 : value;
+    const nextValue = !Number.isFinite(value) ? 0 : value;
     updateRangeRefStyle(nextValue);
     setTrackProgress(nextValue);
     debouncedSetCurrentTime(nextValue);
   };
 
   return (
-    <div
-      className={[
-        styleUtils.fullWidth,
-        styleUtils.flexCol,
-        styleUtils.gap,
-      ].join(" ")}
-    >
+    <div className={styles.container}>
+      {/* Audio source node */}
       <audio
         // controls
+        onDurationChange={handleDurationChange}
         onLoadedData={handleAutoPlay}
         onEnded={() => handleSkiptrack(1)}
         src={`/${tracks[currentTrack].url}`}
@@ -132,7 +136,13 @@ function Player({
       >
         <track kind="captions" />
       </audio>
-      <div className={styleUtils.fullWidth}>
+
+      {/* Progress bar */}
+      <div
+        className={[styleUtils.fullWidth, styleUtils.flex, styleUtils.gap].join(
+          " "
+        )}
+      >
         <input
           type="range"
           min="0"
@@ -149,11 +159,8 @@ function Player({
         />
       </div>
 
-      <div
-        className={[styleUtils.fullWidth, styleUtils.flex, styleUtils.gap].join(
-          " "
-        )}
-      >
+      {/* Audio controls */}
+      <div className={styles.controlsContainer}>
         <ControlButton
           handler={handlePlay}
           action={isPlaying ? "Pause" : "Play"}
@@ -168,7 +175,13 @@ function Player({
           disabled={Boolean(currentTrack === tracks.length - 1)}
           action="Next"
         />
-        <p>Now Playing: {tracks[currentTrack].title}</p>
+        <div className={styles.trackTime}>
+          <p>{`${formatTime(trackProgress)} / ${formatTime(trackLenth)}`}</p>
+        </div>
+        <div className={styles.trackInfo}>
+          <h3>{tracks[currentTrack].title}</h3>
+          <h4>{tracks[currentTrack].artist}</h4>
+        </div>
       </div>
     </div>
   );

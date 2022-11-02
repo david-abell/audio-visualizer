@@ -1,8 +1,8 @@
 .visualizer-container {
   width: 100%;
-  max-width: 95vw;
 }
 
 .visualizer-container svg {
   display: block;
+  width: 100%;
 }
