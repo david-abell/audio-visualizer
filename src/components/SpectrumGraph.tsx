@@ -39,7 +39,7 @@ function SpectrumGraph({ audioRef }: Props) {
     );
 
     // Must be one of: 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, and 32768.
-    // React chockes at counts greater than 256 with this draw method.
+    // React chokes at counts greater than 256 with this draw method.
     analyzerRef.current.fftSize = 128;
 
     // Half fftSize value. This is the total number of bars graphed
