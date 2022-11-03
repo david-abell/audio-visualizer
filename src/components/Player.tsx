@@ -25,14 +25,18 @@ function Player({
   isPlaying,
   setIsPlaying,
 }: Props) {
-  const [trackProgress, setTrackProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
   const [trackLenth, setTrackLength] = useState(0);
-  const trackProgressIntervalRef = useRef<number | undefined>();
-  const trackProgressRangeRef = useRef<HTMLInputElement>(null);
+  const [playbackError, setPlaybackError] = useState("");
 
-  const updateRangeRefStyle = useCallback(
+  // References
+  const whilePlayingIntervalRef = useRef<number | undefined>();
+  const progressBarRef = useRef<HTMLInputElement>(null);
+
+  // Set custom properties to draw playback progress bar
+  const updateProgressBar = useCallback(
     (value: number) => {
-      const rangeNode = trackProgressRangeRef.current;
+      const rangeNode = progressBarRef.current;
       if (!rangeNode || !audioRef.current) return;
       const { duration } = audioRef.current;
       if (!Number.isFinite(duration)) return;
@@ -44,29 +48,44 @@ function Player({
     [audioRef]
   );
 
-  const startProgressTimer = useCallback(() => {
-    clearInterval(trackProgressIntervalRef.current);
-    trackProgressIntervalRef.current = setInterval(() => {
+  const whilePlayingUpdateCurrentTime = useCallback(() => {
+    clearInterval(whilePlayingIntervalRef.current);
+    whilePlayingIntervalRef.current = setInterval(() => {
       if (audioRef.current) {
-        updateRangeRefStyle(audioRef.current.currentTime);
-        setTrackProgress(audioRef.current.currentTime);
+        updateProgressBar(audioRef.current.currentTime);
+        setCurrentTime(audioRef.current.currentTime);
       }
-    });
-  }, [audioRef, updateRangeRefStyle]);
+    }, 50);
+  }, [audioRef, updateProgressBar]);
 
+  // While playing, updates progress bar
   useEffect(() => {
     if (isPlaying && audioRef.current) {
-      startProgressTimer();
+      whilePlayingUpdateCurrentTime();
     }
-    return () => clearInterval(trackProgressIntervalRef.current);
-  }, [isPlaying, audioRef, currentTrack, startProgressTimer]);
+    return () => clearInterval(whilePlayingIntervalRef.current);
+  }, [isPlaying, audioRef, currentTrack, whilePlayingUpdateCurrentTime]);
 
-  const handleAutoPlay = () => {
+  const play = () => {
+    audioRef.current
+      ?.play()
+      .catch(() => setPlaybackError("There was an error during playback"));
+  };
+
+  const pause = () => {
     if (audioRef.current && isPlaying) {
-      audioRef.current.play().catch(() => undefined);
+      audioRef.current.pause();
     }
   };
 
+  // fires when onLoadedData
+  const handleAutoPlay = () => {
+    if (audioRef.current && isPlaying) {
+      play();
+    }
+  };
+
+  // fires when track duration data loaded
   const handleDurationChange = () => {
     if (audioRef.current) {
       const { duration } = audioRef.current;
@@ -86,47 +105,45 @@ function Player({
   };
 
   const handlePlay = () => {
-    if (!audioRef.current) {
-      return;
-    }
+    if (!audioRef.current) return;
     if (isPlaying) {
-      audioRef.current.pause();
+      pause();
     } else {
-      audioRef.current.play().catch(() => undefined);
+      play();
     }
     setIsPlaying((prev) => !prev);
   };
 
+  // eslint ignore required because callback is not an arrow function
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSetCurrentTime = useCallback(
+  const debouncedUpdateCurrentTime = useCallback(
     debounce((value: number) => {
       if (!audioRef.current) return;
+
+      // This is expected to mutate
       // eslint-disable-next-line no-param-reassign
       audioRef.current.currentTime = value;
 
       if (!isPlaying) {
-        audioRef.current.play().catch(() => undefined);
+        play();
         setIsPlaying(true);
-        startProgressTimer();
+        whilePlayingUpdateCurrentTime();
       }
     }, 200),
     []
   );
 
-  const handleTrackProgress = (value: number) => {
-    clearInterval(trackProgressIntervalRef.current);
-
-    const nextValue = !Number.isFinite(value) ? 0 : value;
-    updateRangeRefStyle(nextValue);
-    setTrackProgress(nextValue);
-    debouncedSetCurrentTime(nextValue);
+  const handleChangeCurrentTime = (value: number) => {
+    clearInterval(whilePlayingIntervalRef.current);
+    updateProgressBar(value);
+    setCurrentTime(value);
+    debouncedUpdateCurrentTime(value);
   };
 
   return (
     <div className={styles.container}>
       {/* Audio source node */}
       <audio
-        // controls
         onDurationChange={handleDurationChange}
         onLoadedData={handleAutoPlay}
         onEnded={() => handleSkiptrack(1)}
@@ -136,6 +153,9 @@ function Player({
       >
         <track kind="captions" />
       </audio>
+
+      {/* Error display */}
+      {!!playbackError && <div>{playbackError}</div>}
 
       {/* Progress bar */}
       <div
@@ -151,33 +171,41 @@ function Player({
               ? audioRef.current.duration
               : "100"
           }
-          value={trackProgress}
-          onChange={(e) => handleTrackProgress(Number(e.target.value))}
+          value={currentTime}
+          onChange={(e) => handleChangeCurrentTime(Number(e.target.value))}
           className={styles.rangeSlider}
           step="any"
-          ref={trackProgressRangeRef}
+          ref={progressBarRef}
         />
       </div>
 
-      {/* Audio controls */}
       <div className={styles.controlsContainer}>
+        {/* Play/Pause button */}
         <ControlButton
           handler={handlePlay}
           action={isPlaying ? "Pause" : "Play"}
         />
+
+        {/* Previous track button */}
         <ControlButton
           handler={() => handleSkiptrack(-1)}
           disabled={Boolean(currentTrack === 0)}
           action="Previous"
         />
+
+        {/* Next track button */}
         <ControlButton
           handler={() => handleSkiptrack(-1)}
           disabled={Boolean(currentTrack === tracks.length - 1)}
           action="Next"
         />
+
+        {/* Current time / Total time display */}
         <div className={styles.trackTime}>
-          <p>{`${formatTime(trackProgress)} / ${formatTime(trackLenth)}`}</p>
+          <p>{`${formatTime(currentTime)} / ${formatTime(trackLenth)}`}</p>
         </div>
+
+        {/* Track description */}
         <div className={styles.trackInfo}>
           <h3>{tracks[currentTrack].title}</h3>
           <h4>{tracks[currentTrack].artist}</h4>
