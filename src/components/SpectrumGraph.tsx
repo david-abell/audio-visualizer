@@ -8,11 +8,12 @@ interface Props {
   audioRef: AudioRef;
 }
 
+// Set svg aspect ratio
 const viewBoxMap = {
   SVGMinX: 0,
   SVGMinY: 0,
-  SVGWidth: 200, // 2x SVGMinX
-  SVGHeight: 10, // 2x SVGMinY
+  SVGWidth: 200,
+  SVGHeight: 10,
 };
 const svgViewbox = Object.values(viewBoxMap).join(" ");
 
@@ -20,17 +21,15 @@ export type ViewBoxMap = typeof viewBoxMap;
 
 function SpectrumGraph({ audioRef }: Props) {
   const [rawData, setRawData] = useState<RawData>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isError, setIsError] = useState<false | string>(false);
 
+  // References
   const audioContextRef = useRef<AudioContext | undefined>();
   const sourceRef = useRef<MediaElementAudioSourceNode | undefined>();
   const analyzerRef = useRef<AnalyserNode | undefined>();
-
-  const bufferLength = useRef<number | undefined>();
   const dataArray = useRef<Uint8Array | undefined>();
 
-  const initContext = async () => {
+  // Initialize audio context and analyzer and connect to audio sourcenode
+  const initContext = () => {
     if (!audioRef.current || audioContextRef.current) return;
     audioContextRef.current = new AudioContext();
 
@@ -39,19 +38,22 @@ function SpectrumGraph({ audioRef }: Props) {
       audioRef.current
     );
 
-    analyzerRef.current.fftSize = 256;
-    bufferLength.current = analyzerRef.current.frequencyBinCount;
-    dataArray.current = new Uint8Array(bufferLength.current);
+    // Must be one of: 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, and 32768.
+    // React chockes at counts greater than 256 with this draw method.
+    analyzerRef.current.fftSize = 128;
+
+    // Half fftSize value. This is the total number of bars graphed
+    const bufferLength = analyzerRef.current.frequencyBinCount;
+    dataArray.current = new Uint8Array(bufferLength);
 
     sourceRef.current.connect(analyzerRef.current);
     analyzerRef.current.connect(audioContextRef.current.destination);
   };
 
+  // Request animation frame update function
   const update = useCallback(() => {
     if (!dataArray.current || !analyzerRef.current) return;
     analyzerRef.current.getByteFrequencyData(dataArray.current);
-    // const orig = [...dataArray.current];
-    // setRawData(orig);
     setRawData([...dataArray.current]);
   }, []);
 
@@ -59,9 +61,10 @@ function SpectrumGraph({ audioRef }: Props) {
     useRequestAnimationFrame(update);
 
   if (!audioContextRef.current) {
-    initContext().catch((e) => setIsError(String(e)));
+    initContext();
   }
 
+  // Setup playback event listeners
   useEffect(() => {
     const audioNode = audioRef.current;
     if (!audioNode) return undefined;
@@ -77,6 +80,7 @@ function SpectrumGraph({ audioRef }: Props) {
     };
   }, [handleStartAnimation, handleStopAnimation, audioRef]);
 
+  // Compute Svg paths from raw analyzer data
   const paths = useMemo<LinePath[]>(
     () => getLinePaths(rawData, viewBoxMap),
     [rawData]
