@@ -37,7 +37,7 @@
 
 List the ready features here:
 
-- Awesome feature 1
+- Audio spectrum displays live track frequency Hz, color coded by decibel range.
 - Awesome feature 2
 - Awesome feature 3
 
