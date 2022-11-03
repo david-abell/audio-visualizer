@@ -8,27 +8,23 @@ function getLinePaths(data: RawData, viewBox: ViewBoxMap): LinePath[] {
   const result: LinePath[] = [];
   const total = data.reduce((acc, val) => acc + val, 0);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { SVGHeight, SVGMinX, SVGMinY, SVGWidth } = viewBox;
   let currentX = SVGMinX;
 
-  const padLineWidth = 0.2;
-
   for (const value of data) {
+    if (!value) break;
     const width = (value / total) * SVGWidth;
     const scaledValue = value / 255;
     const barHeight = SVGHeight * scaledValue;
 
-    const color = scaledValue
-      ? interpolateRainbow(scaledValue)
-      : "rgb(0, 0, 0, 0)";
+    const color = interpolateRainbow(scaledValue);
 
     const path = lineBuilder([
       [currentX, SVGHeight + SVGMinY],
       [currentX, SVGHeight + SVGMinY - barHeight],
     ]);
-    if (scaledValue && !Number.isNaN(width) && path) {
-      result.push({ path, color, width: width + padLineWidth });
+    if (path) {
+      result.push({ path, color, width });
     }
     currentX += width;
   }
