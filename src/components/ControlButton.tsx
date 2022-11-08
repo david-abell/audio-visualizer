@@ -18,6 +18,7 @@ function ControlButton({ handler, disabled, action }: ControlProps) {
     <button
       type="button"
       onClick={handler}
+      onTouchStart={handler}
       className={styles.button}
       disabled={disabled}
     >

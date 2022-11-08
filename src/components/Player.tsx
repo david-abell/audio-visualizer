@@ -5,6 +5,7 @@ import styleUtils from "../styles/styleUtils.module.css";
 import styles from "../styles/Player.module.css";
 import ControlButton from "./ControlButton";
 import formatTime from "../utils/formatTime";
+import useAudioContext from "../useAudioContext";
 
 interface Props {
   currentTrack: number;
@@ -29,6 +30,8 @@ function Player({
   const [trackLenth, setTrackLength] = useState(0);
   const [playbackError, setPlaybackError] = useState("");
 
+  const { audioContext, initAudioContext } = useAudioContext();
+
   // References
   const whilePlayingIntervalRef = useRef<number | undefined>();
   const progressBarRef = useRef<HTMLInputElement>(null);
@@ -48,7 +51,7 @@ function Player({
     [audioRef]
   );
 
-  const whilePlayingUpdateCurrentTime = useCallback(() => {
+  const whilePlaying = useCallback(() => {
     clearInterval(whilePlayingIntervalRef.current);
     whilePlayingIntervalRef.current = setInterval(() => {
       if (audioRef.current) {
@@ -58,27 +61,28 @@ function Player({
     }, 50);
   }, [audioRef, updateProgressBar]);
 
-  // While playing, updates progress bar
+  // Updates progress bar and current time while audio is playing,
   useEffect(() => {
     if (isPlaying && audioRef.current) {
-      whilePlayingUpdateCurrentTime();
+      whilePlaying();
     }
     return () => clearInterval(whilePlayingIntervalRef.current);
-  }, [isPlaying, audioRef, currentTrack, whilePlayingUpdateCurrentTime]);
+  }, [isPlaying, audioRef, currentTrack, whilePlaying]);
 
   const play = () => {
-    audioRef.current
-      ?.play()
-      .catch(() => setPlaybackError("There was an error during playback"));
+    if (!audioRef.current) return;
+    setIsPlaying(true);
+    audioRef.current.play().catch((e) => setPlaybackError(JSON.stringify(e)));
   };
 
   const pause = () => {
-    if (audioRef.current && isPlaying) {
+    setIsPlaying(false);
+    if (audioRef.current) {
       audioRef.current.pause();
     }
   };
 
-  // fires when onLoadedData
+  // fired by audio node event onLoadedData
   const handleAutoPlay = () => {
     if (audioRef.current && isPlaying) {
       play();
@@ -104,14 +108,16 @@ function Player({
     }
   };
 
-  const handlePlay = () => {
+  const handlePlay = (shouldPause = true) => {
     if (!audioRef.current) return;
-    if (isPlaying) {
+    if (!audioContext) {
+      initAudioContext();
+    }
+    if (isPlaying && shouldPause) {
       pause();
     } else {
       play();
     }
-    setIsPlaying((prev) => !prev);
   };
 
   // eslint ignore required because callback is not an arrow function
@@ -123,17 +129,13 @@ function Player({
       // This is expected to mutate
       // eslint-disable-next-line no-param-reassign
       audioRef.current.currentTime = value;
-
-      if (!isPlaying) {
-        play();
-        setIsPlaying(true);
-        whilePlayingUpdateCurrentTime();
-      }
+      handlePlay(false);
+      whilePlaying();
     }, 200),
-    []
+    [audioContext, audioRef.current]
   );
 
-  const handleChangeCurrentTime = (value: number) => {
+  const handleProgressbarOnChange = (value: number) => {
     clearInterval(whilePlayingIntervalRef.current);
     updateProgressBar(value);
     setCurrentTime(value);
@@ -144,12 +146,15 @@ function Player({
     <div className={styles.container}>
       {/* Audio source node */}
       <audio
+        // crossOrigin="anonymous"
+        // controls
         onDurationChange={handleDurationChange}
         onLoadedData={handleAutoPlay}
+        onLoadedMetadata={handleDurationChange}
         onEnded={() => handleSkiptrack(1)}
         src={`/${tracks[currentTrack].url}`}
         ref={audioRef}
-        preload="metadata"
+        preload="auto"
       >
         <track kind="captions" />
       </audio>
@@ -172,7 +177,7 @@ function Player({
               : "100"
           }
           value={currentTime}
-          onChange={(e) => handleChangeCurrentTime(Number(e.target.value))}
+          onChange={(e) => handleProgressbarOnChange(Number(e.target.value))}
           className={styles.rangeSlider}
           step="any"
           ref={progressBarRef}
