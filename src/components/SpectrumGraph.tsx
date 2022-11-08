@@ -3,6 +3,7 @@ import styles from "../styles/SpectrumGraph.module.css";
 import { AudioRef, RawData, LinePath } from "../types/types";
 import useRequestAnimationFrame from "../useRequestAnimationFrame";
 import getLinePaths from "../utils/getLinePaths";
+import useAudioContext from "../useAudioContext";
 
 interface Props {
   audioRef: AudioRef;
@@ -21,34 +22,12 @@ export type ViewBoxMap = typeof viewBoxMap;
 
 function SpectrumGraph({ audioRef }: Props) {
   const [rawData, setRawData] = useState<RawData>([]);
+  const { audioContext } = useAudioContext();
 
   // References
-  const audioContextRef = useRef<AudioContext | undefined>();
   const sourceRef = useRef<MediaElementAudioSourceNode | undefined>();
   const analyzerRef = useRef<AnalyserNode | undefined>();
   const dataArray = useRef<Uint8Array | undefined>();
-
-  // Initialize audio context and analyzer and connect to audio sourcenode
-  const initContext = () => {
-    if (!audioRef.current || audioContextRef.current) return;
-    audioContextRef.current = new AudioContext();
-
-    analyzerRef.current = audioContextRef.current.createAnalyser();
-    sourceRef.current = audioContextRef.current.createMediaElementSource(
-      audioRef.current
-    );
-
-    // Must be one of: 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, and 32768.
-    // React chokes at counts greater than 256 with this draw method.
-    analyzerRef.current.fftSize = 128;
-
-    // Half fftSize value. This is the total number of bars graphed
-    const bufferLength = analyzerRef.current.frequencyBinCount;
-    dataArray.current = new Uint8Array(bufferLength);
-
-    sourceRef.current.connect(analyzerRef.current);
-    analyzerRef.current.connect(audioContextRef.current.destination);
-  };
 
   // Request animation frame update function
   const update = useCallback(() => {
@@ -60,9 +39,40 @@ function SpectrumGraph({ audioRef }: Props) {
   const { handleStartAnimation, handleStopAnimation } =
     useRequestAnimationFrame(update);
 
-  if (!audioContextRef.current) {
-    initContext();
-  }
+  // Initialize analyzer and connect to audio sourcenode
+  useEffect(() => {
+    if (!audioRef.current || !audioContext || analyzerRef.current)
+      return undefined;
+
+    analyzerRef.current = audioContext.createAnalyser();
+
+    // fftSize must be one of: 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, and 32768.
+    // React chokes at counts greater than 256 with this draw method.
+    analyzerRef.current = new AnalyserNode(audioContext, {
+      fftSize: 256,
+      maxDecibels: -5,
+      minDecibels: -90,
+      // smoothingTimeConstant: 0.8, // default value 0.8
+    });
+
+    if (!sourceRef.current) {
+      sourceRef.current = audioContext.createMediaElementSource(
+        audioRef.current
+      );
+    }
+
+    // Half fftSize value. This is the total number of bars graphed
+    const bufferLength = analyzerRef.current.frequencyBinCount;
+    dataArray.current = new Uint8Array(bufferLength);
+
+    sourceRef.current.connect(analyzerRef.current);
+    analyzerRef.current.connect(audioContext.destination);
+
+    return () => {
+      sourceRef.current?.disconnect();
+      analyzerRef.current?.disconnect();
+    };
+  }, [audioContext, audioRef]);
 
   // Setup playback event listeners
   useEffect(() => {

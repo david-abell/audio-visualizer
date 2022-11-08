@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import styles from "./App.module.css";
 import styleUtils from "./styles/styleUtils.module.css";
 import Player from "./components/Player";
 import SpectrumGraph from "./components/SpectrumGraph";
 import { Track } from "./types/types";
-import useAudioSource from "./useAudioSource";
 import library from "./assets/library";
 
 function App() {
@@ -12,7 +11,7 @@ function App() {
   const [tracks, setTracks] = useState<Track[]>(library);
   const [currentTrack, setCurrentTrack] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const { audioRef } = useAudioSource(tracks[currentTrack]);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   return (
     <div className={[styles.app, styleUtils.gap].join(" ")}>
