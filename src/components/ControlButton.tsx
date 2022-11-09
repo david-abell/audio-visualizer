@@ -9,11 +9,12 @@ type ActionType = "Play" | "Pause" | "Previous" | "Next";
 
 export type ControlProps = {
   handler: () => void;
-  disabled?: boolean;
   action: ActionType;
+  disabled?: boolean;
+  onKeyup?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
 };
 
-function ControlButton({ handler, disabled, action }: ControlProps) {
+function ControlButton({ handler, disabled, action, onKeyup }: ControlProps) {
   return (
     <button
       type="button"
@@ -21,6 +22,7 @@ function ControlButton({ handler, disabled, action }: ControlProps) {
       onTouchStart={handler}
       className={styles.button}
       disabled={disabled}
+      onKeyUp={onKeyup ? (e) => onKeyup(e) : undefined}
     >
       {action === "Play" && <IconPlay />}
       {action === "Pause" && <IconPause />}

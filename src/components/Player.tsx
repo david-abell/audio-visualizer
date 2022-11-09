@@ -81,18 +81,18 @@ function Player({
     }
   }, [volume, audioRef, volumeRef]);
 
-  const play = useCallback(() => {
+  const play = () => {
     if (!audioRef.current) return;
     setIsPlaying(true);
     audioRef.current.play().catch((e) => setPlaybackError(JSON.stringify(e)));
-  }, [audioRef, setIsPlaying]);
+  };
 
-  const pause = useCallback(() => {
+  const pause = () => {
     setIsPlaying(false);
     if (audioRef.current) {
       audioRef.current.pause();
     }
-  }, [audioRef, setIsPlaying]);
+  };
 
   // fired by audio node event onLoadedData
   const handleAutoPlay = () => {
@@ -124,36 +124,39 @@ function Player({
     setVolume(Number(target));
   };
 
-  const handlePlay = useCallback(
-    (shouldPause = true) => {
-      if (!audioRef.current) return;
+  const handlePlay = (shouldPause = true) => {
+    if (!audioRef.current) return;
+    if (!audioContext) {
+      initAudioContext();
+    }
+    if (isPlaying && shouldPause) {
+      pause();
+    } else {
+      setIsPlaying(true);
+      audioRef.current.play().catch((e) => setPlaybackError(JSON.stringify(e)));
+    }
+  };
+
+  // Play / Pause on Spacebar keyboard event
+  useEffect(() => {
+    const handleKeyup = (event: KeyboardEvent) => {
+      if (!audioRef.current || event.code !== "Space") return;
       if (!audioContext) {
         initAudioContext();
       }
-      if (isPlaying && shouldPause) {
+      if (isPlaying) {
         pause();
       } else {
         play();
       }
-    },
-
-    [audioContext, audioRef, isPlaying, pause, play, initAudioContext]
-  );
-
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === " ") {
-        handlePlay();
-      }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    // Remove event listeners on cleanup
+    window.addEventListener("keyup", handleKeyup);
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyup);
     };
-  }, [handlePlay]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioContext, isPlaying]);
 
   // eslint ignore required because callback is not an arrow function
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -224,6 +227,7 @@ function Player({
         <ControlButton
           handler={handlePlay}
           action={isPlaying ? "Pause" : "Play"}
+          onKeyup={(e) => e.stopPropagation()}
         />
 
         {/* Previous track button */}
