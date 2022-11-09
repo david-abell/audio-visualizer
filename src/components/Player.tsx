@@ -81,18 +81,18 @@ function Player({
     }
   }, [volume, audioRef, volumeRef]);
 
-  const play = () => {
+  const play = useCallback(() => {
     if (!audioRef.current) return;
     setIsPlaying(true);
     audioRef.current.play().catch((e) => setPlaybackError(JSON.stringify(e)));
-  };
+  }, [audioRef, setIsPlaying]);
 
-  const pause = () => {
+  const pause = useCallback(() => {
     setIsPlaying(false);
     if (audioRef.current) {
       audioRef.current.pause();
     }
-  };
+  }, [audioRef, setIsPlaying]);
 
   // fired by audio node event onLoadedData
   const handleAutoPlay = () => {
@@ -124,17 +124,36 @@ function Player({
     setVolume(Number(target));
   };
 
-  const handlePlay = (shouldPause = true) => {
-    if (!audioRef.current) return;
-    if (!audioContext) {
-      initAudioContext();
-    }
-    if (isPlaying && shouldPause) {
-      pause();
-    } else {
-      play();
-    }
-  };
+  const handlePlay = useCallback(
+    (shouldPause = true) => {
+      if (!audioRef.current) return;
+      if (!audioContext) {
+        initAudioContext();
+      }
+      if (isPlaying && shouldPause) {
+        pause();
+      } else {
+        play();
+      }
+    },
+
+    [audioContext, audioRef, isPlaying, pause, play, initAudioContext]
+  );
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === " ") {
+        handlePlay();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    // Remove event listeners on cleanup
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handlePlay]);
 
   // eslint ignore required because callback is not an arrow function
   // eslint-disable-next-line react-hooks/exhaustive-deps
