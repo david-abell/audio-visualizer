@@ -6,6 +6,7 @@ import styles from "../styles/Player.module.css";
 import ControlButton from "./ControlButton";
 import formatTime from "../utils/formatTime";
 import useAudioContext from "../useAudioContext";
+import IconVolume from "./icons/IconVolume";
 
 interface Props {
   currentTrack: number;
@@ -29,12 +30,14 @@ function Player({
   const [currentTime, setCurrentTime] = useState(0);
   const [trackLenth, setTrackLength] = useState(0);
   const [playbackError, setPlaybackError] = useState("");
+  const [volume, setVolume] = useState(0.8);
 
   const { audioContext, initAudioContext } = useAudioContext();
 
   // References
   const whilePlayingIntervalRef = useRef<number | undefined>();
   const progressBarRef = useRef<HTMLInputElement>(null);
+  const volumeRef = useRef<HTMLInputElement>(null);
 
   // Set custom properties to draw playback progress bar
   const updateProgressBar = useCallback(
@@ -68,6 +71,15 @@ function Player({
     }
     return () => clearInterval(whilePlayingIntervalRef.current);
   }, [isPlaying, audioRef, currentTrack, whilePlaying]);
+
+  // Set audio volume and update volume input
+  useEffect(() => {
+    if (audioRef.current && volumeRef.current) {
+      // eslint-disable-next-line no-param-reassign
+      audioRef.current.volume = volume;
+      volumeRef.current.style.setProperty("--value", String(volume * 100));
+    }
+  }, [volume, audioRef, volumeRef]);
 
   const play = () => {
     if (!audioRef.current) return;
@@ -106,6 +118,10 @@ function Player({
     } else {
       setCurrentTrack(nextSong);
     }
+  };
+
+  const handleVolume = (target: string) => {
+    setVolume(Number(target));
   };
 
   const handlePlay = (shouldPause = true) => {
@@ -204,6 +220,21 @@ function Player({
           disabled={Boolean(currentTrack === tracks.length - 1)}
           action="Next"
         />
+
+        {/* Volume control */}
+        <div className={styles.volumeContainer}>
+          <IconVolume />
+          <input
+            type="range"
+            onChange={({ target }) => handleVolume(target.value)}
+            value={volume}
+            min="0"
+            max="1"
+            step=".01"
+            ref={volumeRef}
+            className={styles.volumeSlider}
+          />
+        </div>
 
         {/* Current time / Total time display */}
         <div className={styles.trackTime}>
