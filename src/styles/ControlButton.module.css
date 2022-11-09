@@ -10,9 +10,11 @@
   margin-inline-start: 0.6rem;
   min-width: 4rem;
   text-align: start;
+  color: #e5e5e5;
 }
 
 .button svg {
   height: 2rem;
   width: auto;
+  color: #e5e5e5;
 }
