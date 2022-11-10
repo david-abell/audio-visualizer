@@ -10,6 +10,8 @@
     "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
+    "@iconify/icons-quill": "^1.2.1",
+    "@iconify/react": "^4.0.0",
     "@types/d3": "^7.4.0",
     "@types/lodash": "^4.14.186",
     "d3": "^7.6.1",

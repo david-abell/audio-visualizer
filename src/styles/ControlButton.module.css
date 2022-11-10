@@ -23,3 +23,7 @@
 .button[disabled] svg {
   color: #a8a8a8;
 }
+
+.prev-icon {
+  transform: rotate(180deg);
+}
