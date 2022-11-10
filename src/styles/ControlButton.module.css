@@ -18,3 +18,8 @@
   width: auto;
   color: #e5e5e5;
 }
+
+.button[disabled] span,
+.button[disabled] svg {
+  color: #a8a8a8;
+}
