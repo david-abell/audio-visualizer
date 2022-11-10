@@ -1,9 +1,9 @@
-import styles from "../styles/ControlButton.module.css";
+import { Icon } from "@iconify/react/dist/offline";
+import skipIcon from "@iconify/icons-quill/skip";
+import playIcon from "@iconify/icons-quill/play";
+import pauseIcon from "@iconify/icons-quill/pause";
 
-import IconPause from "./icons/IconPause";
-import IconPlay from "./icons/IconPlay";
-import IconNext from "./icons/IconNext";
-import IconPrevious from "./icons/IconPrevious";
+import styles from "../styles/ControlButton.module.css";
 
 type ActionType = "Play" | "Pause" | "Previous" | "Next";
 
@@ -24,10 +24,12 @@ function ControlButton({ handler, disabled, action, onKeyup }: ControlProps) {
       disabled={disabled}
       onKeyUp={onKeyup ? (e) => onKeyup(e) : undefined}
     >
-      {action === "Play" && <IconPlay />}
-      {action === "Pause" && <IconPause />}
-      {action === "Next" && <IconNext />}
-      {action === "Previous" && <IconPrevious />}
+      {action === "Play" && <Icon icon={playIcon} />}
+      {action === "Pause" && <Icon icon={pauseIcon} />}
+      {action === "Next" && <Icon icon={skipIcon} />}
+      {action === "Previous" && (
+        <Icon icon={skipIcon} className={styles.prevIcon} />
+      )}
       <span>{action}</span>
     </button>
   );

@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
+import { Icon } from "@iconify/react/dist/offline";
+import muteIcon from "@iconify/icons-quill/mute";
+import soundIcon from "@iconify/icons-quill/sound";
 import { AudioRef, Track } from "../types/types";
 import styleUtils from "../styles/styleUtils.module.css";
 import styles from "../styles/Player.module.css";
 import ControlButton from "./ControlButton";
 import formatTime from "../utils/formatTime";
 import useAudioContext from "../useAudioContext";
-import IconVolume from "./icons/IconVolume";
 
 interface Props {
   currentTrack: number;
@@ -246,7 +248,7 @@ function Player({
 
         {/* Volume control */}
         <div className={styles.volumeContainer}>
-          <IconVolume />
+          {volume > 0 ? <Icon icon={soundIcon} /> : <Icon icon={muteIcon} />}
           <input
             type="range"
             onChange={({ target }) => handleVolume(target.value)}
