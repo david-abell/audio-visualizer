@@ -5,6 +5,7 @@ import Player from "./components/Player";
 import SpectrumGraph from "./components/SpectrumGraph";
 import { Track } from "./types/types";
 import library from "./assets/library";
+import PlayList from "./components/Playlist";
 
 function App() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -15,7 +16,15 @@ function App() {
 
   return (
     <div className={[styles.app, styleUtils.gap].join(" ")}>
-      <img src={tracks[currentTrack].cover} alt="Album cover" />
+      <div className={styles.content}>
+        <PlayList
+          currentTrack={currentTrack}
+          setCurrentTrack={setCurrentTrack}
+          tracks={tracks}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+        />
+      </div>
       <div className={styles.fixedBottom}>
         <SpectrumGraph audioRef={audioRef} />
         <Player
