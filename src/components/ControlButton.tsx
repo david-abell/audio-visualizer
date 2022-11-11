@@ -10,11 +10,20 @@ type ActionType = "Play" | "Pause" | "Previous" | "Next";
 export type ControlProps = {
   handler: () => void;
   action: ActionType;
+  varient?: "dark" | "light";
+  labeled?: boolean;
   disabled?: boolean;
   onKeyup?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
 };
 
-function ControlButton({ handler, disabled, action, onKeyup }: ControlProps) {
+function ControlButton({
+  handler,
+  disabled,
+  action,
+  onKeyup,
+  varient = "dark",
+  labeled = true,
+}: ControlProps) {
   return (
     <button
       type="button"
@@ -23,6 +32,8 @@ function ControlButton({ handler, disabled, action, onKeyup }: ControlProps) {
       className={styles.button}
       disabled={disabled}
       onKeyUp={onKeyup ? (e) => onKeyup(e) : undefined}
+      data-varient={varient}
+      data-labeled={labeled}
     >
       {action === "Play" && <Icon icon={playIcon} />}
       {action === "Pause" && <Icon icon={pauseIcon} />}
@@ -30,7 +41,7 @@ function ControlButton({ handler, disabled, action, onKeyup }: ControlProps) {
       {action === "Previous" && (
         <Icon icon={skipIcon} className={styles.prevIcon} />
       )}
-      <span>{action}</span>
+      {labeled && <span>{action}</span>}
     </button>
   );
 }

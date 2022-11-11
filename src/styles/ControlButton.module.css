@@ -19,6 +19,23 @@
   color: #e5e5e5;
 }
 
+.button:hover {
+  outline: none;
+  border-color: transparent;
+}
+
+/* .button:hover {
+  border-color: #646cff;
+} */
+
+/* .button:hover svg {
+  border-color: #646cff;
+} */
+
+.button:hover svg {
+  transform: scale(1.2);
+}
+
 .button[disabled] span,
 .button[disabled] svg {
   color: #a8a8a8;
@@ -26,4 +43,13 @@
 
 .prev-icon {
   transform: rotate(180deg);
+}
+
+.button:hover .prev-icon {
+  transform: rotate(180deg) scale(1.2);
+}
+
+.button[data-varient="light"] span,
+.button[data-varient="light"] svg {
+  color: #213547;
 }
