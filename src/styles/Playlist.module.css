@@ -20,6 +20,7 @@
 }
 
 .list-item:hover svg {
+  transition: transform ease 50ms;
   transform: scale(1.2);
 }
 

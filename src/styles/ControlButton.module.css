@@ -4,6 +4,7 @@
   justify-content: flex-start;
   padding: 0.2rem;
   background: transparent;
+  transition: transform ease 50ms;
 }
 
 .button span {
