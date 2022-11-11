@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  height: 100%;
+}
+
+.list-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: start;
+}
+
+.list-item svg {
+  height: 2rem;
+  width: auto;
+  color: #213547;
+}
+
+.list-item:hover svg {
+  transition: transform ease 50ms;
+  transform: scale(1.2);
+}
+
+.list-item p {
+  margin: 0;
+}
+
+.list-item span {
+  margin-inline-start: 0.5rem;
+}
+
+.button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: start;
+}
