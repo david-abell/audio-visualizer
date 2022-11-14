@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import type { Track } from "./types/types";
+import type { Track } from "../types/types";
 
 export type RawData = number[];
 

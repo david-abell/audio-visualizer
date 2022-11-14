@@ -2,7 +2,7 @@ import { debounce } from "lodash";
 import { useCallback, useEffect, useRef } from "react";
 import shallow from "zustand/shallow";
 import usePlayerStore from "./usePlayerStore";
-import useAudioContext from "../useAudioContext";
+import useAudioContext from "./useAudioContext";
 
 import { AudioRef, Track } from "../types/types";
 

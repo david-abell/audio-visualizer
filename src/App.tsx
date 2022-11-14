@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import styles from "./App.module.css";
+import styles from "./styles/App.module.css";
 import styleUtils from "./styles/styleUtils.module.css";
 import Player from "./components/Player";
 import SpectrumGraph from "./components/SpectrumGraph";

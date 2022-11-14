@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import styles from "../styles/SpectrumGraph.module.css";
 import { AudioRef, RawData, LinePath } from "../types/types";
-import useRequestAnimationFrame from "../useRequestAnimationFrame";
+import useRequestAnimationFrame from "../hooks/useRequestAnimationFrame";
 import getLinePaths from "../utils/getLinePaths";
-import useAudioContext from "../useAudioContext";
+import useAudioContext from "../hooks/useAudioContext";
 
 interface Props {
   audioRef: AudioRef;
