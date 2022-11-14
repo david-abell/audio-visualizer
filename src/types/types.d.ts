@@ -14,3 +14,5 @@ export interface Track {
   artist: string;
   url: string;
 }
+
+export type RangeRef = React.RefObject<HTMLInputElement>;

@@ -24,11 +24,17 @@ function ControlButton({
   varient = "dark",
   labeled = true,
 }: ControlProps) {
+  const preventDefaultHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (e) {
+      e.preventDefault();
+    }
+    handler();
+  };
+
   return (
     <button
       type="button"
-      onClick={handler}
-      onTouchStart={handler}
+      onClick={(e) => preventDefaultHandler(e)}
       className={styles.button}
       disabled={disabled}
       onKeyUp={onKeyup ? (e) => onKeyup(e) : undefined}
