@@ -41,6 +41,14 @@ function usePlayer(
 
   const { audioContext, initAudioContext } = useAudioContext();
 
+  // Set volume at component mount
+  useEffect(() => {
+    const audioNode = audioRef.current;
+    if (!audioNode) return;
+    volumeRef.current?.style.setProperty("--value", String(volume * 100));
+    audioNode.volume = Number(volume);
+  }, [volume, volumeRef, audioRef]);
+
   // Set css custom properties for progress bar
   const updateProgressBar = useCallback(
     (value: number) => {
@@ -160,15 +168,15 @@ function usePlayer(
     [audioContext, audioRef]
   );
 
-  const handleChangeAudioToTime = (value: number) => {
+  const handleChangeAudioToTime = (time: number) => {
     pause();
-    updateProgressBar(value);
-    setCurrentTime(value);
+    updateProgressBar(time);
+    setCurrentTime(time);
     const { current } = audioRef;
     if (current) {
-      current.currentTime = value;
+      current.currentTime = time;
     }
-    debouncedChangeAudioTime(value);
+    debouncedChangeAudioTime(time);
   };
 
   const handleClose = () => {
