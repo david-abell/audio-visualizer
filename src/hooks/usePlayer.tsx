@@ -1,10 +1,11 @@
 import { debounce } from "lodash";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import shallow from "zustand/shallow";
 import usePlayerStore from "./usePlayerStore";
 import useAudioContext from "./useAudioContext";
 
 import { AudioRef, Track } from "../types/types";
+import useInterval from "./useInterval";
 
 type SkipTrackNum = 1 | -1;
 
@@ -40,10 +41,7 @@ function usePlayer(
 
   const { audioContext, initAudioContext } = useAudioContext();
 
-  // References
-  const whilePlayingIntervalRef = useRef<number | undefined>();
-
-  // Set custom properties to draw playback progress bar
+  // Set css custom properties for progress bar
   const updateProgressBar = useCallback(
     (value: number) => {
       const rangeNode = progressBarRef.current;
@@ -58,40 +56,32 @@ function usePlayer(
   );
 
   // Interval callback function
-  const whilePlaying = useCallback(() => {
-    const { current } = whilePlayingIntervalRef;
-    // console.log(current);
-    clearInterval(current);
-    whilePlayingIntervalRef.current = setInterval(() => {
-      if (audioRef.current) {
-        updateProgressBar(audioRef.current.currentTime);
-        setCurrentTime(audioRef.current.currentTime);
-        // console.log(current);
-      }
-    }, 50);
-  }, [audioRef, setCurrentTime, updateProgressBar]);
+  const whilePlaying = () => {
+    if (audioRef.current) {
+      updateProgressBar(audioRef.current.currentTime);
+      setCurrentTime(audioRef.current.currentTime);
+      // console.log(current);
+    }
+  };
+
+  useInterval(whilePlaying, isPlaying ? 60 : null);
 
   const play = useCallback(() => {
-    if (!audioRef.current) return;
+    setIsPlaying(true);
+    audioRef.current?.play().catch((e) => setPlaybackError(JSON.stringify(e)));
     if (!audioContext) {
       initAudioContext();
     }
-    whilePlaying();
-    setIsPlaying(true);
-    audioRef.current.play().catch((e) => setPlaybackError(JSON.stringify(e)));
   }, [
     audioContext,
     audioRef,
     initAudioContext,
     setIsPlaying,
     setPlaybackError,
-    whilePlaying,
   ]);
 
   const pause = useCallback(() => {
-    const { current } = whilePlayingIntervalRef;
     setIsPlaying(false);
-    clearInterval(current);
     if (audioRef.current) {
       audioRef.current.pause();
     }
@@ -169,15 +159,18 @@ function usePlayer(
       const { current } = audioRef;
       current.currentTime = value;
       play();
-    }, 200),
+    }, 60),
     [audioContext, audioRef]
   );
 
   const handleChangeAudioToTime = (value: number) => {
-    const { current } = whilePlayingIntervalRef;
-    clearInterval(current);
+    pause();
     updateProgressBar(value);
     setCurrentTime(value);
+    const { current } = audioRef;
+    if (current) {
+      current.currentTime = value;
+    }
     debouncedChangeAudioTime(value);
   };
 
