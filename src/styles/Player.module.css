@@ -166,7 +166,7 @@
 /* Volume range input styles */
 
 .volume-slider {
-  --value: 80;
+  --value: 50;
   --min: 0;
   --max: 100;
   --range: calc(var(--max) - var(--min));

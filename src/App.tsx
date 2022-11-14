@@ -11,8 +11,10 @@ function App() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tracks, setTracks] = useState<Track[]>(library);
   const [currentTrack, setCurrentTrack] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+  // const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const progressBarRef = useRef<HTMLInputElement>(null);
+  const volumeRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className={[styles.app, styleUtils.gap].join(" ")}>
@@ -21,19 +23,24 @@ function App() {
           currentTrack={currentTrack}
           setCurrentTrack={setCurrentTrack}
           tracks={tracks}
-          isPlaying={isPlaying}
-          setIsPlaying={setIsPlaying}
+          audioRef={audioRef}
+          progressBarRef={progressBarRef}
+          volumeRef={volumeRef}
+          // isPlaying={isPlaying}
+          // setIsPlaying={setIsPlaying}
         />
       </div>
       <div className={styles.fixedBottom}>
         <SpectrumGraph audioRef={audioRef} />
         <Player
           audioRef={audioRef}
+          progressBarRef={progressBarRef}
+          volumeRef={volumeRef}
           setCurrentTrack={setCurrentTrack}
           tracks={tracks}
           currentTrack={currentTrack}
-          isPlaying={isPlaying}
-          setIsPlaying={setIsPlaying}
+          // isPlaying={isPlaying}
+          // setIsPlaying={setIsPlaying}
         />
       </div>
     </div>
