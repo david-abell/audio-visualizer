@@ -15,6 +15,7 @@ function App() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressBarRef = useRef<HTMLInputElement>(null);
   const volumeRef = useRef<HTMLInputElement>(null);
+  const [showPlayer, setShowPlayer] = useState(false);
 
   return (
     <div className={[styles.app, styleUtils.gap].join(" ")}>
@@ -26,23 +27,27 @@ function App() {
           audioRef={audioRef}
           progressBarRef={progressBarRef}
           volumeRef={volumeRef}
+          setShowPlayer={setShowPlayer}
           // isPlaying={isPlaying}
           // setIsPlaying={setIsPlaying}
         />
       </div>
-      <div className={styles.fixedBottom}>
-        <SpectrumGraph audioRef={audioRef} />
-        <Player
-          audioRef={audioRef}
-          progressBarRef={progressBarRef}
-          volumeRef={volumeRef}
-          setCurrentTrack={setCurrentTrack}
-          tracks={tracks}
-          currentTrack={currentTrack}
-          // isPlaying={isPlaying}
-          // setIsPlaying={setIsPlaying}
-        />
-      </div>
+      {showPlayer && (
+        <div className={styles.fixedBottom}>
+          <SpectrumGraph audioRef={audioRef} />
+          <Player
+            audioRef={audioRef}
+            progressBarRef={progressBarRef}
+            volumeRef={volumeRef}
+            setCurrentTrack={setCurrentTrack}
+            tracks={tracks}
+            currentTrack={currentTrack}
+            setShowPlayer={setShowPlayer}
+            // isPlaying={isPlaying}
+            // setIsPlaying={setIsPlaying}
+          />
+        </div>
+      )}
     </div>
   );
 }

@@ -41,7 +41,12 @@ function SpectrumGraph({ audioRef }: Props) {
 
   // Initialize analyzer and connect to audio sourcenode
   useEffect(() => {
-    if (!audioRef.current || !audioContext || analyzerRef.current)
+    if (
+      !audioRef.current ||
+      !audioContext ||
+      analyzerRef.current ||
+      audioContext?.state === "closed"
+    )
       return undefined;
 
     analyzerRef.current = audioContext.createAnalyser();

@@ -13,23 +13,20 @@ type Props = {
   currentTrack: number;
   setCurrentTrack: React.Dispatch<React.SetStateAction<number>>;
   tracks: Track[];
-  // isPlaying: boolean;
-  // setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   audioRef: AudioRef;
   progressBarRef: RangeRef;
   volumeRef: RangeRef;
+  setShowPlayer: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function PlayList({
   currentTrack,
   setCurrentTrack,
   tracks,
-  // isPlaying,
-  // setIsPlaying,
   audioRef,
   progressBarRef,
   volumeRef,
+  setShowPlayer,
 }: Props) {
   const { play, pause } = usePlayer(
     audioRef,
@@ -42,7 +39,8 @@ function PlayList({
 
   const isPlaying = usePlayerStore((state) => state.isPlaying, shallow);
 
-  const handleSelectTrack = (e: React.MouseEvent, num: number) => {
+  const handleSelectTrack = (num: number) => {
+    setShowPlayer(true);
     if (currentTrack !== num || (currentTrack === num && !isPlaying)) {
       setCurrentTrack(num);
       play();
@@ -60,7 +58,7 @@ function PlayList({
             <li key={track.title} className={styles.listItem}>
               <button
                 type="button"
-                onClick={(e) => handleSelectTrack(e, index)}
+                onClick={() => handleSelectTrack(index)}
                 className={styles.button}
               >
                 <Icon

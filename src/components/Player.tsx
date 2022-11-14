@@ -15,6 +15,7 @@ interface Props {
   audioRef: AudioRef;
   progressBarRef: RangeRef;
   volumeRef: RangeRef;
+  setShowPlayer: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function Player({
@@ -24,6 +25,7 @@ function Player({
   tracks,
   progressBarRef,
   volumeRef,
+  setShowPlayer,
 }: Props) {
   const {
     currentTime,
@@ -32,11 +34,12 @@ function Player({
     handleChangeAudioToTime,
     handleSkiptrack,
     handleVolumeChange,
-    playbackError,
+    playerError,
     trackLength,
     togglePlayPause,
     volume,
     isPlaying,
+    handleClose,
   } = usePlayer(
     audioRef,
     progressBarRef,
@@ -45,6 +48,11 @@ function Player({
     currentTrack,
     setCurrentTrack
   );
+
+  const handleHidePlayer = () => {
+    handleClose();
+    setShowPlayer(false);
+  };
 
   return (
     <div className={styles.container}>
@@ -63,7 +71,7 @@ function Player({
       </audio>
 
       {/* Error display */}
-      {!!playbackError && <div>{playbackError}</div>}
+      {!!playerError && <div>{playerError}</div>}
 
       {/* Progress bar */}
       <div
@@ -140,6 +148,9 @@ function Player({
           <h4>{tracks[currentTrack].artist}</h4>
         </div>
       </div>
+      <button type="button" onClick={handleHidePlayer}>
+        Close
+      </button>
     </div>
   );
 }

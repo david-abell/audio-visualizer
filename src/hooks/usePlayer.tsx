@@ -30,7 +30,7 @@ function usePlayer(
     (state) => [state.trackLength, state.setTrackLength],
     shallow
   );
-  const [playbackError, setPlaybackError] = usePlayerStore(
+  const [playerError, setPlayerError] = usePlayerStore(
     (state) => [state.playbackError, state.setPlaybackError],
     shallow
   );
@@ -68,17 +68,14 @@ function usePlayer(
 
   const play = useCallback(() => {
     setIsPlaying(true);
-    audioRef.current?.play().catch((e) => setPlaybackError(JSON.stringify(e)));
+    audioRef.current?.play().catch((e) => setPlayerError(JSON.stringify(e)));
     if (!audioContext) {
       initAudioContext();
     }
-  }, [
-    audioContext,
-    audioRef,
-    initAudioContext,
-    setIsPlaying,
-    setPlaybackError,
-  ]);
+    if (audioContext?.state === "closed") {
+      initAudioContext();
+    }
+  }, [audioContext, audioRef, initAudioContext, setIsPlaying, setPlayerError]);
 
   const pause = useCallback(() => {
     setIsPlaying(false);
@@ -174,16 +171,23 @@ function usePlayer(
     debouncedChangeAudioTime(value);
   };
 
+  const handleClose = () => {
+    pause();
+    if (audioContext) {
+      audioContext.close().catch((e) => setPlayerError(JSON.stringify(e)));
+    }
+  };
+
   return {
     currentTime,
     isPlaying,
-    playbackError,
+    playerError,
     trackLength,
     volume,
     // setCurrentTime,
     // setTrackLength,
-    // setPlaybackError,
-    // setIsPlaying,
+    // setPlayerError,
+    setIsPlaying,
     handleAutoPlay,
     handleDurationChange,
     handleSkiptrack,
@@ -192,6 +196,7 @@ function usePlayer(
     togglePlayPause,
     play,
     pause,
+    handleClose,
   };
 }
 export default usePlayer;
