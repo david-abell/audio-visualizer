@@ -159,7 +159,7 @@
 }
 
 .volume-container svg {
-  height: 2rem;
+  height: 3rem;
   width: auto;
 }
 
@@ -267,4 +267,16 @@
 
 .volume-slider:hover:active {
   cursor: grabbing;
+}
+
+.button {
+  height: 100%;
+  padding: 0;
+  color: #e5e5e5;
+  background-color: transparent;
+}
+
+.button svg {
+  height: 3rem;
+  width: auto;
 }

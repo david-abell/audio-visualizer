@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react/dist/offline";
 import muteIcon from "@iconify/icons-quill/mute";
 import soundIcon from "@iconify/icons-quill/sound";
+import escapeIcon from "@iconify/icons-quill/escape";
 import { AudioRef, Track, RangeRef } from "../types/types";
 import styleUtils from "../styles/styleUtils.module.css";
 import styles from "../styles/Player.module.css";
@@ -147,10 +148,16 @@ function Player({
           <h3>{tracks[currentTrack].title}</h3>
           <h4>{tracks[currentTrack].artist}</h4>
         </div>
+        {/* Close player button */}
+        <button
+          type="button"
+          onClick={handleHidePlayer}
+          area-label="Close"
+          className={styles.button}
+        >
+          <Icon icon={escapeIcon} aria-hidden="true" inline />
+        </button>
       </div>
-      <button type="button" onClick={handleHidePlayer}>
-        Close
-      </button>
     </div>
   );
 }
