@@ -1,11 +1,11 @@
 import { debounce } from "lodash";
 import { useCallback, useEffect } from "react";
 import shallow from "zustand/shallow";
+import { useInterval } from "usehooks-ts";
 import usePlayerStore from "./usePlayerStore";
 import useAudioContext from "./useAudioContext";
 
 import { AudioRef, Track } from "../types/types";
-import useInterval from "./useInterval";
 
 type SkipTrackNum = 1 | -1;
 
