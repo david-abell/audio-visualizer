@@ -20,8 +20,8 @@
 }
 
 .list-item:hover svg {
-  transition: transform ease 50ms;
-  transform: scale(1.2);
+  transition: transform ease-in 60ms;
+  transform: scale(1.1);
 }
 
 .list-item p {

@@ -4,7 +4,7 @@
   justify-content: flex-start;
   padding: 0.2rem;
   background: transparent;
-  transition: transform ease 50ms;
+  transition: transform ease-in 60ms;
 }
 
 .button span {
@@ -34,7 +34,7 @@
 } */
 
 .button:hover svg {
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 .button[disabled] span,
@@ -47,7 +47,7 @@
 }
 
 .button:hover .prev-icon {
-  transform: rotate(180deg) scale(1.2);
+  transform: rotate(180deg) scale(1.1);
 }
 
 .button[data-varient="light"] span,
