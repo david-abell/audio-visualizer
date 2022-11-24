@@ -1,28 +1,46 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { useMediaQuery } from "usehooks-ts";
+
 import styles from "../styles/SpectrumGraph.module.css";
-import { AudioRef, RawData, LinePath } from "../types/types";
+
 import useRequestAnimationFrame from "../hooks/useRequestAnimationFrame";
 import getLinePaths from "../utils/getLinePaths";
 import useAudioContext from "../hooks/useAudioContext";
+
+import { AudioRef, RawData, LinePath } from "../types/types";
 
 interface Props {
   audioRef: AudioRef;
 }
 
 // Set svg aspect ratio
-const viewBoxMap = {
+const deskTopViewBoxMap = {
   SVGMinX: 0,
   SVGMinY: 0,
   SVGWidth: 200,
   SVGHeight: 10,
 };
-const svgViewbox = Object.values(viewBoxMap).join(" ");
 
-export type ViewBoxMap = typeof viewBoxMap;
+const mobileViewBoxMap = {
+  ...deskTopViewBoxMap,
+  SVGHeight: 40,
+};
+
+export type ViewBoxMap = typeof deskTopViewBoxMap;
 
 function SpectrumGraph({ audioRef }: Props) {
   const [rawData, setRawData] = useState<RawData>([]);
   const { audioContext } = useAudioContext();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  const svgViewbox = isMobile
+    ? Object.values(mobileViewBoxMap).join(" ")
+    : Object.values(deskTopViewBoxMap).join(" ");
+
+  const viewBoxMap = useMemo(
+    () => (isMobile ? mobileViewBoxMap : deskTopViewBoxMap),
+    [isMobile]
+  );
 
   // References
   const sourceRef = useRef<MediaElementAudioSourceNode | undefined>();
@@ -100,7 +118,7 @@ function SpectrumGraph({ audioRef }: Props) {
   // Compute Svg paths from raw analyzer data
   const paths = useMemo<LinePath[]>(
     () => getLinePaths(rawData, viewBoxMap),
-    [rawData]
+    [rawData, viewBoxMap]
   );
 
   return (
