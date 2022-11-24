@@ -40,7 +40,11 @@
   position: absolute;
   top: 0;
   right: 0;
-  background-color: green;
+  background-color: transparent;
+}
+
+.controls-right svg {
+  display: block;
 }
 
 @media only screen and (min-width: 768px) {

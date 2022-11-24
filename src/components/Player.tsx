@@ -223,7 +223,7 @@ function Player({
             area-label="Close"
             className={styles.button}
           >
-            <Icon icon={escapeIcon} aria-hidden="true" inline />
+            <Icon icon={escapeIcon} aria-hidden="true" />
           </button>
         </div>
       </div>
