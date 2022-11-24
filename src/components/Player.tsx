@@ -58,12 +58,7 @@ function Player({
     setCurrentTrack
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isMobile = useMediaQuery("(max-width: 768px)");
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const volumeIcon =
-    volume > 0 ? <Icon icon={soundIcon} /> : <Icon icon={muteIcon} />;
 
   // close volume control when clicked away
   useEffect(() => {
@@ -164,7 +159,7 @@ function Player({
 
           {/* Volume control */}
           <div className={styles.volumeContainer}>
-            {/* mobile volume control */}
+            {/* mobile volume control toggles slider */}
             {isMobile && (
               <>
                 {showVolume && (
@@ -195,7 +190,7 @@ function Player({
                 </button>
               </>
             )}
-            {/* large screen volume control */}
+            {/* large screen volume control toggles mute */}
             {!isMobile && (
               <>
                 <button type="button" onClick={toggleIsMuted}>
