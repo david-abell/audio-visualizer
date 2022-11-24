@@ -269,7 +269,7 @@
 
 .volume-slider::-moz-range-track {
   appearance: none;
-  background: var(--color-background);
+  background: var(--color-progress);
   border-radius: var(--slider-border-radius);
   border: none;
   height: var(--slider-height);
@@ -278,7 +278,7 @@
 }
 
 .volume-slider::-moz-range-progress {
-  background: var(--color-progress);
+  background: var(--color-background);
   height: var(--slider-height);
   border-radius: var(--slider-border-radius);
   margin: 0;
