@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Icon } from "@iconify/react/dist/offline";
 import muteIcon from "@iconify/icons-quill/mute";
 import soundIcon from "@iconify/icons-quill/sound";
@@ -63,6 +64,25 @@ function Player({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const volumeIcon =
     volume > 0 ? <Icon icon={soundIcon} /> : <Icon icon={muteIcon} />;
+
+  // close volume control when clicked away
+  useEffect(() => {
+    if (!isMobile) return undefined;
+
+    function handleClickOutside(this: Document, e: MouseEvent) {
+      if (
+        volumeRef.current &&
+        e.target instanceof HTMLElement &&
+        !volumeRef.current.contains(e.target)
+      ) {
+        setShowVolume(false);
+      }
+    }
+    if (showVolume && volumeRef.current) {
+      document.addEventListener("click", handleClickOutside);
+    }
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [showVolume, setShowVolume, isMobile, volumeRef]);
 
   const handleShowVolume = () => {
     setShowVolume(!showVolume);
@@ -144,6 +164,7 @@ function Player({
 
           {/* Volume control */}
           <div className={styles.volumeContainer}>
+            {/* mobile volume control */}
             {isMobile && (
               <>
                 {showVolume && (
@@ -174,6 +195,7 @@ function Player({
                 </button>
               </>
             )}
+            {/* large screen volume control */}
             {!isMobile && (
               <>
                 <button type="button" onClick={toggleIsMuted}>
