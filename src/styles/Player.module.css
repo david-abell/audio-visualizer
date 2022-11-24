@@ -214,6 +214,7 @@
 .volume-container svg {
   height: 2.6rem;
   width: auto;
+  display: block;
 }
 
 /* Volume range input styles */
