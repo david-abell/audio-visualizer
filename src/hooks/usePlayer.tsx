@@ -38,7 +38,18 @@ function usePlayer(
     (state) => [state.volume, state.setVolume],
     shallow
   );
+  const [showVolume, setShowVolume] = usePlayerStore(
+    (state) => [state.showVolume, state.setShowVolume],
+    shallow
+  );
+  const [savedVolumeOnMute, setSavedVolumeOnMute] = usePlayerStore(
+    (state) => [state.savedVolumeOnMute, state.setSavedVolumeOnMute],
+    shallow
+  );
 
+  const isMuted = volume === 0;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { audioContext, initAudioContext } = useAudioContext();
 
   // Set volume at component mount
@@ -47,7 +58,7 @@ function usePlayer(
     if (!audioNode) return;
     volumeRef.current?.style.setProperty("--value", String(volume * 100));
     audioNode.volume = Number(volume);
-  }, [volume, volumeRef, audioRef]);
+  }, [volume, volumeRef, audioRef, showVolume]);
 
   // Set css custom properties for progress bar
   const updateProgressBar = useCallback(
@@ -76,21 +87,36 @@ function usePlayer(
 
   const play = useCallback(() => {
     setIsPlaying(true);
-    audioRef.current?.play().catch((e) => setPlayerError(JSON.stringify(e)));
-    if (!audioContext) {
+    if (!audioContext || audioContext.state === "closed") {
       initAudioContext();
     }
-    if (audioContext?.state === "closed") {
-      initAudioContext();
+    if (audioContext?.state === "suspended") {
+      audioContext.resume().catch((e) => {
+        if (e instanceof Error) {
+          setPlayerError(e.message);
+        }
+      });
     }
+    audioRef.current?.play().catch((e) => {
+      if (e instanceof Error) {
+        setPlayerError(e.message);
+      }
+    });
   }, [audioContext, audioRef, initAudioContext, setIsPlaying, setPlayerError]);
 
   const pause = useCallback(() => {
     setIsPlaying(false);
+    if (audioContext?.state !== "closed") {
+      audioContext?.suspend().catch((e) => {
+        if (e instanceof Error) {
+          setPlayerError(e.message);
+        }
+      });
+    }
     if (audioRef.current) {
       audioRef.current.pause();
     }
-  }, [audioRef, setIsPlaying]);
+  }, [audioContext, audioRef, setIsPlaying, setPlayerError]);
 
   const togglePlayPause = () => {
     if (isPlaying) {
@@ -104,9 +130,6 @@ function usePlayer(
   useEffect(() => {
     const handleKeyup = (event: KeyboardEvent) => {
       if (!audioRef.current || event.code !== "Space") return;
-      if (!audioContext) {
-        initAudioContext();
-      }
       if (isPlaying) {
         pause();
       } else {
@@ -118,7 +141,7 @@ function usePlayer(
     return () => {
       window.removeEventListener("keyup", handleKeyup);
     };
-  }, [audioContext, isPlaying, audioRef, initAudioContext, pause, play]);
+  }, [isPlaying, audioRef, pause, play]);
 
   // used to play new tracks when audio node event onLoadedData fires
   const handleAutoPlay = () => {
@@ -146,16 +169,38 @@ function usePlayer(
     }
   };
 
-  const handleVolumeChange = (target: string) => {
+  function handleVolumeChange(target: string) {
     const { current } = audioRef;
     if (current) {
       current.volume = Number(target);
       volumeRef.current?.style.setProperty("--value", String(volume * 100));
     }
     setVolume(Number(target));
+  }
+
+  const toggleIsMuted = () => {
+    const currentVolume = volume;
+    const savedVolume = savedVolumeOnMute;
+    const { current } = audioRef;
+    if (!current) return;
+
+    if (isMuted) {
+      current.volume = savedVolume;
+      volumeRef.current?.style.setProperty(
+        "--value",
+        String(savedVolume * 100)
+      );
+      setVolume(savedVolume);
+    } else {
+      setSavedVolumeOnMute(currentVolume);
+      current.volume = 0;
+      volumeRef.current?.style.setProperty("--value", String(0));
+      setVolume(0);
+    }
   };
 
   // eslint ignore required because callback is not an arrow function
+  //
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedChangeAudioTime = useCallback(
     debounce((value: number) => {
@@ -165,11 +210,13 @@ function usePlayer(
       current.currentTime = value;
       play();
     }, 60),
-    [audioContext, audioRef]
+    [audioContext, audioRef, setIsPlaying, setPlayerError]
   );
 
   const handleChangeAudioToTime = (time: number) => {
-    pause();
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
     updateProgressBar(time);
     setCurrentTime(time);
     const { current } = audioRef;
@@ -179,19 +226,31 @@ function usePlayer(
     debouncedChangeAudioTime(time);
   };
 
-  const handleClose = () => {
+  const handleClose = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const target = event.target as HTMLButtonElement;
+
+    setShowVolume(false);
     pause();
-    if (audioContext) {
-      audioContext.close().catch((e) => setPlayerError(JSON.stringify(e)));
-    }
+    audioContext?.close().catch((e) => {
+      if (e instanceof Error) {
+        setPlayerError(e.message);
+      }
+    });
   };
 
   return {
+    audioContext,
     currentTime,
     isPlaying,
     playerError,
     trackLength,
     volume,
+    showVolume,
+    isMuted,
+    toggleIsMuted,
     // setCurrentTime,
     // setTrackLength,
     // setPlayerError,
@@ -202,6 +261,7 @@ function usePlayer(
     handleVolumeChange,
     handleChangeAudioToTime,
     togglePlayPause,
+    setShowVolume,
     play,
     pause,
     handleClose,
