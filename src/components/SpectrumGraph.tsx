@@ -44,10 +44,10 @@ function SpectrumGraph({ audioRef }: Props) {
     if (
       !audioRef.current ||
       !audioContext ||
-      analyzerRef.current ||
-      audioContext?.state === "closed"
-    )
+      audioContext.state !== "running"
+    ) {
       return undefined;
+    }
 
     analyzerRef.current = audioContext.createAnalyser();
 
@@ -76,6 +76,8 @@ function SpectrumGraph({ audioRef }: Props) {
     return () => {
       sourceRef.current?.disconnect();
       analyzerRef.current?.disconnect();
+      sourceRef.current = undefined;
+      analyzerRef.current = undefined;
     };
   }, [audioContext, audioRef]);
 
