@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0.2rem;
+  padding: 0;
   background: transparent;
   transition: transform ease-in 60ms;
 }
@@ -12,10 +12,11 @@
   min-width: 4rem;
   text-align: start;
   color: #e5e5e5;
+  display: none;
 }
 
 .button svg {
-  height: 3rem;
+  height: 2.6rem;
   width: auto;
   color: #e5e5e5;
 }
@@ -53,4 +54,15 @@
 .button[data-varient="light"] span,
 .button[data-varient="light"] svg {
   color: #213547;
+}
+
+@media only screen and (min-width: 768px) {
+  .controls-container {
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .button span {
+    display: block;
+  }
 }
