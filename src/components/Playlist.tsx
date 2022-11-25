@@ -3,6 +3,7 @@ import playIcon from "@iconify/icons-quill/play";
 import pauseIcon from "@iconify/icons-quill/pause";
 import shallow from "zustand/shallow";
 
+import { useState } from "react";
 import styles from "../styles/Playlist.module.css";
 import usePlayer from "../hooks/usePlayer";
 import usePlayerStore from "../hooks/usePlayerStore";
@@ -38,6 +39,13 @@ function PlayList({
   );
 
   const isPlaying = usePlayerStore((state) => state.isPlaying, shallow);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [filter, setFilter] = useState("");
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const filteredTracks = tracks.filter((el) =>
+    el.title.toLowerCase().includes(filter.toLowerCase())
+  );
 
   const handleSelectTrack = (num: number) => {
     setShowPlayer(true);
@@ -49,16 +57,21 @@ function PlayList({
     }
   };
 
+  const handleFilterInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilter(e.target.value);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.albumCover}>
         <img src={tracks[currentTrack].cover} alt="Album cover" />
       </div>
-      <div>
+      <div className={styles.listContainer}>
         <h2>Playlist</h2>
+        <input type="text" onChange={(e) => handleFilterInput(e)} />
         <ul>
-          {!!tracks.length &&
-            tracks.map((track: Track, index: number) => (
+          {!!filteredTracks.length &&
+            filteredTracks.map((track: Track, index: number) => (
               <li
                 key={track.title}
                 className={
