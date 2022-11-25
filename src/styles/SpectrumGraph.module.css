@@ -1,5 +1,6 @@
 .visualizer-container {
   width: 100%;
+  pointer-events: none;
 }
 
 .visualizer-container svg {
