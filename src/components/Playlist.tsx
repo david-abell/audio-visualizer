@@ -51,27 +51,39 @@ function PlayList({
 
   return (
     <div className={styles.container}>
-      <img src={tracks[currentTrack].cover} alt="Album cover" />
-      <ul>
-        {!!tracks.length &&
-          tracks.map((track: Track, index: number) => (
-            <li key={track.title} className={styles.listItem}>
-              <button
-                type="button"
-                onClick={() => handleSelectTrack(index)}
-                className={styles.button}
+      <div className={styles.albumCover}>
+        <img src={tracks[currentTrack].cover} alt="Album cover" />
+      </div>
+      <div>
+        <h2>Playlist</h2>
+        <ul>
+          {!!tracks.length &&
+            tracks.map((track: Track, index: number) => (
+              <li
+                key={track.title}
+                className={
+                  currentTrack === index
+                    ? [styles.listItem, styles.isPlaying].join(" ")
+                    : styles.listItem
+                }
               >
-                <Icon
-                  icon={
-                    isPlaying && index === currentTrack ? pauseIcon : playIcon
-                  }
-                />
-                <p>{track.title}</p>
-                <span>{track.artist}</span>
-              </button>
-            </li>
-          ))}
-      </ul>
+                <button
+                  type="button"
+                  onClick={() => handleSelectTrack(index)}
+                  className={styles.button}
+                >
+                  <Icon
+                    icon={
+                      isPlaying && index === currentTrack ? pauseIcon : playIcon
+                    }
+                  />
+                  <h3>{track.title}</h3>
+                  <h4>{track.artist}</h4>
+                </button>
+              </li>
+            ))}
+        </ul>
+      </div>
     </div>
   );
 }

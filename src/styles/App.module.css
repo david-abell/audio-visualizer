@@ -9,24 +9,27 @@
   align-items: center;
   justify-content: flex-start;
   margin: 0 auto;
-  padding-block: 1rem;
+  padding-block-start: 1rem;
 }
 
 @media only screen and (min-width: 768px) {
   .app {
-    padding-block: 2rem;
+    padding-block-start: 2rem;
     justify-content: flex-start;
   }
 }
 
 .content {
-  width: 100%;
-  padding-inline: 1rem;
+  width: 75rem;
+  max-width: 100%;
+  flex-grow: 1;
+  text-align: center;
 }
 
 .fixed-bottom {
-  position: absolute;
+  position: sticky;
   bottom: 0;
   left: 0;
   width: 100%;
+  pointer-events: none;
 }
