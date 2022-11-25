@@ -41,11 +41,15 @@ function PlayList({
   const isPlaying = usePlayerStore((state) => state.isPlaying, shallow);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [filter, setFilter] = useState("");
+  const [filterBy, setFilterBy] = useState("title");
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const filteredTracks = tracks.filter((el) =>
-    el.title.toLowerCase().includes(filter.toLowerCase())
-  );
+  const filteredTracks = tracks.filter((el) => {
+    if (filterBy === "Title") {
+      return el.title.toLowerCase().includes(filter.toLowerCase());
+    }
+    return el.artist.toLowerCase().includes(filter.toLowerCase());
+  });
 
   const handleSelectTrack = (num: number) => {
     setShowPlayer(true);
@@ -61,6 +65,10 @@ function PlayList({
     setFilter(e.target.value);
   };
 
+  const handleSelectFilterBy = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilterBy(e.target.value);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.albumCover}>
@@ -68,7 +76,19 @@ function PlayList({
       </div>
       <div className={styles.listContainer}>
         <h2>Playlist</h2>
-        <input type="text" onChange={(e) => handleFilterInput(e)} />
+        <div className={styles.filterContainer}>
+          <input type="text" onChange={(e) => handleFilterInput(e)} />
+
+          <select
+            value={filterBy}
+            id="search-select"
+            aria-label="search criteria"
+            onChange={(e) => handleSelectFilterBy(e)}
+          >
+            <option>Title</option>
+            <option>Artist</option>
+          </select>
+        </div>
         <ul>
           {!!filteredTracks.length &&
             filteredTracks.map((track: Track, index: number) => (

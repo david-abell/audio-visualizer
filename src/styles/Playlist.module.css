@@ -11,11 +11,29 @@
   text-align: center;
 }
 
-.list-container input {
+.filter-container {
+  display: flex;
+}
+
+/* 
+.filter-container :first-child {
+} */
+
+.filter-container select {
+  font-size: 1.6rem;
+  padding: 0.5rem;
+}
+
+.filter-container option {
+  font-size: inherit;
+  padding: 0.5rem;
+}
+
+.filter-container input {
   width: 20rem;
-  max-width: 100%;
   font-size: 1.2rem;
   padding: 0.5rem;
+  margin-inline-end: 1rem;
 }
 
 .album-cover {
