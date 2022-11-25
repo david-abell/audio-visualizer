@@ -64,19 +64,24 @@ function Player({
   useEffect(() => {
     if (!isMobile) return undefined;
 
-    function handleClickOutside(this: Document, e: MouseEvent) {
+    function handleClickOutside(this: Document, e: MouseEvent | TouchEvent) {
       if (
         volumeRef.current &&
         e.target instanceof HTMLElement &&
         !volumeRef.current.contains(e.target)
       ) {
+        e.preventDefault();
         setShowVolume(false);
       }
     }
     if (showVolume && volumeRef.current) {
       document.addEventListener("click", handleClickOutside);
+      document.addEventListener("touchend", handleClickOutside);
     }
-    return () => document.removeEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("touchend", handleClickOutside);
+    };
   }, [showVolume, setShowVolume, isMobile, volumeRef]);
 
   const handleShowVolume = () => {
@@ -135,7 +140,7 @@ function Player({
 
       <div className={styles.controlsContainer}>
         {/* Left control group */}
-        <div className={styles.controlsLeft}>
+        <div className={styles.controls}>
           {/* Previous track button */}
           <ControlButton
             handler={() => handleSkiptrack(-1)}
@@ -218,21 +223,24 @@ function Player({
           </div>
         </div>
 
-        <div className={styles.controlsCenter}>
-          {/* Current time / Total time display */}
-          <div className={styles.trackTime}>
-            <p>{`${formatTime(currentTime)} / ${formatTime(trackLength)}`}</p>
-          </div>
-
-          {/* Track description */}
-          <div className={styles.trackInfo}>
-            <h3>{tracks[currentTrack].title}</h3>
-            <h4>{tracks[currentTrack].artist}</h4>
-          </div>
+        {/* Current time / Total time display */}
+        <div className={styles.trackTime}>
+          <p>{formatTime(currentTime)}</p>
+          <span>-</span>
+          <p>{formatTime(trackLength)}</p>
         </div>
 
+        {/* Track description */}
+        {!isMobile && (
+          <div className={styles.trackInfo}>
+            <h3>{tracks[currentTrack].title}</h3>
+            <span>-</span>
+            <h4>{tracks[currentTrack].artist}</h4>
+          </div>
+        )}
+
         {/* Right control group */}
-        <div className={styles.controlsRight}>
+        <div className={styles.controlsClose}>
           {/* Close player button */}
           <button
             type="button"
