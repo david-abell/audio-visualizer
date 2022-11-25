@@ -32,7 +32,7 @@ const library: Track[] = [
     url: "Orleans.mp3",
   },
   {
-    title: "Tuesday",
+    title: "Upbeat Funk Pop",
     cover: new URL("../assets/scottholmesmusic.jpg", import.meta.url).href,
     artist: "Scott Holmes Music",
     url: "UpbeatFunkPop.mp3",
