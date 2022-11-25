@@ -20,6 +20,7 @@ function App() {
   return (
     <div className={[styles.app, styleUtils.gap].join(" ")}>
       <div className={styles.content}>
+        <h1>Spectrum Audio Player</h1>
         <PlayList
           currentTrack={currentTrack}
           setCurrentTrack={setCurrentTrack}
