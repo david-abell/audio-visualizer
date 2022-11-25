@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import styles from "./styles/App.module.css";
-import styleUtils from "./styles/styleUtils.module.css";
 import Player from "./components/Player";
 import SpectrumGraph from "./components/SpectrumGraph";
 import { Track } from "./types/types";
@@ -18,7 +17,7 @@ function App() {
   const [showPlayer, setShowPlayer] = useState(false);
 
   return (
-    <div className={[styles.app, styleUtils.gap].join(" ")}>
+    <div className={styles.app}>
       <div className={styles.content}>
         <h1>Spectrum Audio Player</h1>
         <PlayList
@@ -32,6 +31,9 @@ function App() {
           // isPlaying={isPlaying}
           // setIsPlaying={setIsPlaying}
         />
+        <div className={styles.footer}>
+          <h5>This is the footer</h5>
+        </div>
       </div>
       {showPlayer && (
         <div className={styles.fixedBottom}>
