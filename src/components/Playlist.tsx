@@ -29,14 +29,7 @@ function PlayList({
   volumeRef,
   setShowPlayer,
 }: Props) {
-  const { play, pause } = usePlayer(
-    audioRef,
-    progressBarRef,
-    volumeRef,
-    tracks,
-    currentTrack,
-    setCurrentTrack
-  );
+  const { play, pause } = usePlayer(audioRef, progressBarRef, volumeRef);
 
   const isPlaying = usePlayerStore((state) => state.isPlaying, shallow);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

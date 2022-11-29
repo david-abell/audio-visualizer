@@ -23,6 +23,8 @@ interface Props {
   setShowPlayer: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+type SkipTrackNum = 1 | -1;
+
 function Player({
   audioRef,
   currentTrack,
@@ -37,7 +39,6 @@ function Player({
     handleAutoPlay,
     handleDurationChange,
     handleChangeAudioToTime,
-    handleSkiptrack,
     handleVolumeChange,
     playerError,
     trackLength,
@@ -49,14 +50,7 @@ function Player({
     handleClose,
     isMuted,
     toggleIsMuted,
-  } = usePlayer(
-    audioRef,
-    progressBarRef,
-    volumeRef,
-    tracks,
-    currentTrack,
-    setCurrentTrack
-  );
+  } = usePlayer(audioRef, progressBarRef, volumeRef);
 
   const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -93,6 +87,17 @@ function Player({
   ) => {
     handleClose(e);
     setShowPlayer(false);
+  };
+
+  const handleSkiptrack = (num: SkipTrackNum) => {
+    const nextSong = currentTrack + num;
+    if (nextSong < 0) {
+      setCurrentTrack(tracks.length - 1);
+    } else if (nextSong >= tracks.length) {
+      setCurrentTrack(0);
+    } else {
+      setCurrentTrack(nextSong);
+    }
   };
 
   return (
@@ -157,7 +162,7 @@ function Player({
 
           {/* Next track button */}
           <ControlButton
-            handler={() => handleSkiptrack(-1)}
+            handler={() => handleSkiptrack(1)}
             disabled={Boolean(currentTrack === tracks.length - 1)}
             action="Next"
           />

@@ -5,17 +5,12 @@ import { useInterval } from "usehooks-ts";
 import usePlayerStore from "./usePlayerStore";
 import useAudioContext from "./useAudioContext";
 
-import { AudioRef, Track } from "../types/types";
-
-type SkipTrackNum = 1 | -1;
+import { AudioRef } from "../types/types";
 
 function usePlayer(
   audioRef: AudioRef,
   progressBarRef: React.RefObject<HTMLInputElement>,
-  volumeRef: React.RefObject<HTMLInputElement>,
-  tracks: Track[],
-  currentTrack: number,
-  setCurrentTrack: React.Dispatch<React.SetStateAction<number>>
+  volumeRef: React.RefObject<HTMLInputElement>
 ) {
   // Global state values
   const [currentTime, setCurrentTime] = usePlayerStore(
@@ -158,17 +153,6 @@ function usePlayer(
     }
   };
 
-  const handleSkiptrack = (num: SkipTrackNum) => {
-    const nextSong = currentTrack + num;
-    if (nextSong < 0) {
-      setCurrentTrack(tracks.length - 1);
-    } else if (nextSong >= tracks.length) {
-      setCurrentTrack(0);
-    } else {
-      setCurrentTrack(nextSong);
-    }
-  };
-
   function handleVolumeChange(target: string) {
     const { current } = audioRef;
     if (current) {
@@ -257,7 +241,6 @@ function usePlayer(
     setIsPlaying,
     handleAutoPlay,
     handleDurationChange,
-    handleSkiptrack,
     handleVolumeChange,
     handleChangeAudioToTime,
     togglePlayPause,
