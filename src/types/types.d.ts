@@ -13,6 +13,13 @@ export interface Track {
   cover: string;
   artist: string;
   url: string;
+  id: string;
 }
+
+export type TracksMap = Map<string, Track>;
+
+export type TrackFilters = "title" | "artist";
+
+export type FilterBy = keyof Pick<Track, TrackFilters>;
 
 export type RangeRef = React.RefObject<HTMLInputElement>;

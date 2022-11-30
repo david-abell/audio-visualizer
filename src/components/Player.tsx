@@ -14,13 +14,14 @@ import usePlayer from "../hooks/usePlayer";
 import { AudioRef, Track, RangeRef } from "../types/types";
 
 interface Props {
-  currentTrack: number;
-  setCurrentTrack: React.Dispatch<React.SetStateAction<number>>;
+  currentTrack: Track;
+  handleSetTrack: (id: string) => void;
   tracks: Track[];
   audioRef: AudioRef;
   progressBarRef: RangeRef;
   volumeRef: RangeRef;
   setShowPlayer: React.Dispatch<React.SetStateAction<boolean>>;
+  filteredTracks: Track[];
 }
 
 type SkipTrackNum = 1 | -1;
@@ -28,11 +29,14 @@ type SkipTrackNum = 1 | -1;
 function Player({
   audioRef,
   currentTrack,
-  setCurrentTrack,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handleSetTrack,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tracks,
   progressBarRef,
   volumeRef,
   setShowPlayer,
+  filteredTracks,
 }: Props) {
   const {
     currentTime,
@@ -90,14 +94,15 @@ function Player({
   };
 
   const handleSkiptrack = (num: SkipTrackNum) => {
-    const nextSong = currentTrack + num;
-    if (nextSong < 0) {
-      setCurrentTrack(tracks.length - 1);
-    } else if (nextSong >= tracks.length) {
-      setCurrentTrack(0);
-    } else {
-      setCurrentTrack(nextSong);
-    }
+    // const nextSong = currentTrack + num;
+    // if (nextSong < 0) {
+    //   setCurrentTrack(tracks.length - 1);
+    // } else if (nextSong >= tracks.length) {
+    //   setCurrentTrack(0);
+    // } else {
+    //   setCurrentTrack(nextSong);
+    // }
+    console.log("skiptrack:", num);
   };
 
   return (
@@ -109,7 +114,7 @@ function Player({
         onLoadedData={handleAutoPlay}
         onLoadedMetadata={handleDurationChange}
         onEnded={() => handleSkiptrack(1)}
-        src={`/${tracks[currentTrack].url}`}
+        src={`/${currentTrack.url}`}
         ref={audioRef}
         preload="auto"
       >
@@ -149,7 +154,7 @@ function Player({
           {/* Previous track button */}
           <ControlButton
             handler={() => handleSkiptrack(-1)}
-            disabled={Boolean(currentTrack === 0)}
+            disabled={Boolean(currentTrack.id === filteredTracks[0]?.id)}
             action="Previous"
           />
 
@@ -163,7 +168,7 @@ function Player({
           {/* Next track button */}
           <ControlButton
             handler={() => handleSkiptrack(1)}
-            disabled={Boolean(currentTrack === tracks.length - 1)}
+            disabled={Boolean(currentTrack.id === filteredTracks.at(-1)?.id)}
             action="Next"
           />
 
@@ -238,9 +243,9 @@ function Player({
         {/* Track description */}
         {!isMobile && (
           <div className={styles.trackInfo}>
-            <h3>{tracks[currentTrack].title}</h3>
+            <h3>{currentTrack.title}</h3>
             <span>-</span>
-            <h4>{tracks[currentTrack].artist}</h4>
+            <h4>{currentTrack.artist}</h4>
           </div>
         )}
 
