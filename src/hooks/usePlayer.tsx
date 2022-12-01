@@ -47,8 +47,8 @@ function usePlayer(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { audioContext, initAudioContext } = useAudioContext();
 
+  // Store play promises to prevent promise interuption by calls to pause()
   const playPromiseRef = useRef<Promise<void> | undefined>();
-  // const pausePromiseRef = useRef<Promise<void> | undefined>();
 
   // Set volume at component mount
   useEffect(() => {
