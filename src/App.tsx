@@ -57,7 +57,6 @@ function App() {
             progressBarRef={progressBarRef}
             volumeRef={volumeRef}
             handleSetTrack={handleSetTrack}
-            tracks={filteredTracks}
             currentTrack={currentTrack}
             setShowPlayer={setShowPlayer}
             filteredTracks={filteredTracks}

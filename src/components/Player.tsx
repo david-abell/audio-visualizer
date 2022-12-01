@@ -16,7 +16,6 @@ import { AudioRef, Track, RangeRef } from "../types/types";
 interface Props {
   currentTrack: Track;
   handleSetTrack: (id: string) => void;
-  tracks: Track[];
   audioRef: AudioRef;
   progressBarRef: RangeRef;
   volumeRef: RangeRef;
@@ -24,15 +23,10 @@ interface Props {
   filteredTracks: Track[];
 }
 
-type SkipTrackNum = 1 | -1;
-
 function Player({
   audioRef,
   currentTrack,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleSetTrack,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  tracks,
   progressBarRef,
   volumeRef,
   setShowPlayer,
@@ -54,9 +48,13 @@ function Player({
     handleClose,
     isMuted,
     toggleIsMuted,
+    pause,
   } = usePlayer(audioRef, progressBarRef, volumeRef);
 
   const isMobile = useMediaQuery("(max-width: 768px)");
+
+  const filteredTrackIds = filteredTracks.map(({ id }) => id);
+  const showNextPrevControls = filteredTrackIds.indexOf(currentTrack.id) !== -1;
 
   // close volume control when clicked away
   useEffect(() => {
@@ -86,23 +84,51 @@ function Player({
     setShowVolume(!showVolume);
   };
 
-  const handleClosePlayer = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    handleClose(e);
+  const handleClosePlayer = () => {
+    handleClose();
     setShowPlayer(false);
   };
 
-  const handleSkiptrack = (num: SkipTrackNum) => {
-    // const nextSong = currentTrack + num;
-    // if (nextSong < 0) {
-    //   setCurrentTrack(tracks.length - 1);
-    // } else if (nextSong >= tracks.length) {
-    //   setCurrentTrack(0);
-    // } else {
-    //   setCurrentTrack(nextSong);
-    // }
-    console.log("skiptrack:", num);
+  const handleNextTrack = () => {
+    if (!filteredTrackIds.length) return;
+    const firstTrack = filteredTrackIds[0];
+    const currentTrackIndex = filteredTrackIds.indexOf(currentTrack.id);
+    const isLastTrack = currentTrackIndex + 1 >= filteredTrackIds.length;
+
+    if (currentTrackIndex === -1 || isLastTrack) {
+      handleSetTrack(firstTrack);
+    } else {
+      handleSetTrack(filteredTrackIds[currentTrackIndex + 1]);
+    }
+    handleAutoPlay();
+  };
+
+  const handlePrevTrack = () => {
+    if (!filteredTrackIds.length) return;
+    const firstTrack = filteredTrackIds[0];
+    const lastTrack = filteredTrackIds.at(-1);
+
+    const currentTrackIndex = filteredTrackIds.indexOf(currentTrack.id);
+
+    if (currentTrackIndex === -1) {
+      handleSetTrack(firstTrack);
+    } else if (currentTrackIndex === 0 && lastTrack) {
+      handleSetTrack(lastTrack);
+    } else {
+      handleSetTrack(filteredTrackIds[currentTrackIndex - 1]);
+    }
+  };
+
+  const handleOnEnded = () => {
+    if (filteredTrackIds.length) {
+      handleNextTrack();
+    } else {
+      pause();
+    }
+  };
+
+  const handleOnCanPlay = () => {
+    handleAutoPlay();
   };
 
   return (
@@ -111,12 +137,13 @@ function Player({
       <audio
         crossOrigin="anonymous"
         onDurationChange={handleDurationChange}
-        onLoadedData={handleAutoPlay}
         onLoadedMetadata={handleDurationChange}
-        onEnded={() => handleSkiptrack(1)}
-        src={`/${currentTrack.url}`}
+        onEnded={() => handleOnEnded()}
+        onCanPlay={handleOnCanPlay}
+        src={currentTrack.url}
         ref={audioRef}
         preload="auto"
+        autoPlay
       >
         <track kind="captions" />
       </audio>
@@ -149,12 +176,13 @@ function Player({
       </div>
 
       <div className={styles.controlsContainer}>
-        {/* Left control group */}
         <div className={styles.controls}>
           {/* Previous track button */}
           <ControlButton
-            handler={() => handleSkiptrack(-1)}
-            disabled={Boolean(currentTrack.id === filteredTracks[0]?.id)}
+            handler={handlePrevTrack}
+            disabled={Boolean(
+              !showNextPrevControls || currentTrack.id === filteredTracks[0]?.id
+            )}
             action="Previous"
           />
 
@@ -167,8 +195,11 @@ function Player({
 
           {/* Next track button */}
           <ControlButton
-            handler={() => handleSkiptrack(1)}
-            disabled={Boolean(currentTrack.id === filteredTracks.at(-1)?.id)}
+            handler={handleNextTrack}
+            disabled={
+              !showNextPrevControls ||
+              Boolean(currentTrack.id === filteredTracks.at(-1)?.id)
+            }
             action="Next"
           />
 
@@ -249,12 +280,11 @@ function Player({
           </div>
         )}
 
-        {/* Right control group */}
+        {/* Close player button */}
         <div className={styles.controlsClose}>
-          {/* Close player button */}
           <button
             type="button"
-            onClick={(e) => handleClosePlayer(e)}
+            onClick={handleClosePlayer}
             area-label="Close"
             className={styles.button}
           >
