@@ -82,13 +82,13 @@ Include unexpected issues / bugs encountered. How were they resolved?
 - Solid.js is by far the better choice for animating svgs in this manner. This does not run well at over 256 svg paths where Solid.js can easily handle 1024 paths at 60fps.
 - Styling range sliders with a before current value color and after current value color is a non trivial problem. Cross browser consistency of pseudo elements is lacking [This stack overflow answer was very helpful](https://stackoverflow.com/a/66802544/19766980)
 - It took a while to figure out the intricacies of audio context and the necessity of handling it as singleton global state shared between player and audio graph.
+- Control flow for calling Play and Pause on the audio api ended up requiring careful management of Refs and promises to not throw exceptions from stale state and interrupted promises. For example: not storing the Play promise in a Ref caused interruptions by pause requests when seeking with the progress bar, while calling play on a new song withing the same action as setting new song state throws a play interrupted by load event exception...
 
 ## Acknowledgements
 
 Give credit here.
 
 - This project was inspired by Jack Herrington's very cool [60FPS Solid-JS Audio Spectrum Visualizer Project](https://www.youtube.com/watch?v=Xt1dNdJpgw4)
-- Many thanks to...
 
 ## Contact
 
