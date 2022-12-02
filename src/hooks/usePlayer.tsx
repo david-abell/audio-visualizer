@@ -1,21 +1,16 @@
 import { debounce } from "lodash";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import shallow from "zustand/shallow";
 import { useInterval } from "usehooks-ts";
 import usePlayerStore from "./usePlayerStore";
 import useAudioContext from "./useAudioContext";
 
-import { AudioRef, Track } from "../types/types";
-
-type SkipTrackNum = 1 | -1;
+import { AudioRef } from "../types/types";
 
 function usePlayer(
   audioRef: AudioRef,
   progressBarRef: React.RefObject<HTMLInputElement>,
-  volumeRef: React.RefObject<HTMLInputElement>,
-  tracks: Track[],
-  currentTrack: number,
-  setCurrentTrack: React.Dispatch<React.SetStateAction<number>>
+  volumeRef: React.RefObject<HTMLInputElement>
 ) {
   // Global state values
   const [currentTime, setCurrentTime] = usePlayerStore(
@@ -49,8 +44,10 @@ function usePlayer(
 
   const isMuted = volume === 0;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { audioContext, initAudioContext } = useAudioContext();
+
+  // Store play promises to prevent promise interuption by calls to pause()
+  const playPromiseRef = useRef<Promise<void> | undefined>();
 
   // Set volume at component mount
   useEffect(() => {
@@ -79,7 +76,6 @@ function usePlayer(
     if (audioRef.current) {
       updateProgressBar(audioRef.current.currentTime);
       setCurrentTime(audioRef.current.currentTime);
-      // console.log(current);
     }
   };
 
@@ -90,6 +86,13 @@ function usePlayer(
     if (!audioContext || audioContext.state === "closed") {
       initAudioContext();
     }
+
+    playPromiseRef.current = audioRef.current?.play().catch((e) => {
+      if (e instanceof Error) {
+        setPlayerError(e.message);
+      }
+    });
+
     if (audioContext?.state === "suspended") {
       audioContext.resume().catch((e) => {
         if (e instanceof Error) {
@@ -97,12 +100,14 @@ function usePlayer(
         }
       });
     }
-    audioRef.current?.play().catch((e) => {
-      if (e instanceof Error) {
-        setPlayerError(e.message);
-      }
-    });
-  }, [audioContext, audioRef, initAudioContext, setIsPlaying, setPlayerError]);
+  }, [
+    audioContext,
+    audioRef,
+    initAudioContext,
+    setIsPlaying,
+    setPlayerError,
+    playPromiseRef,
+  ]);
 
   const pause = useCallback(() => {
     setIsPlaying(false);
@@ -113,10 +118,18 @@ function usePlayer(
         }
       });
     }
-    if (audioRef.current) {
-      audioRef.current.pause();
+    if (audioRef.current && playPromiseRef.current !== undefined) {
+      playPromiseRef.current
+        ?.then(() => audioRef.current?.pause())
+        .catch((e) => {
+          if (e instanceof Error) {
+            setPlayerError(e.message);
+          }
+        });
+    } else {
+      audioRef.current?.pause();
     }
-  }, [audioContext, audioRef, setIsPlaying, setPlayerError]);
+  }, [audioContext, audioRef, setIsPlaying, setPlayerError, playPromiseRef]);
 
   const togglePlayPause = () => {
     if (isPlaying) {
@@ -145,6 +158,7 @@ function usePlayer(
 
   // used to play new tracks when audio node event onLoadedData fires
   const handleAutoPlay = () => {
+    if (audioContext?.state === "running") return;
     if (audioRef.current && isPlaying) {
       play();
     }
@@ -155,17 +169,6 @@ function usePlayer(
     if (audioRef.current) {
       const { duration } = audioRef.current;
       setTrackLength(Number.isFinite(duration) ? duration : 0);
-    }
-  };
-
-  const handleSkiptrack = (num: SkipTrackNum) => {
-    const nextSong = currentTrack + num;
-    if (nextSong < 0) {
-      setCurrentTrack(tracks.length - 1);
-    } else if (nextSong >= tracks.length) {
-      setCurrentTrack(0);
-    } else {
-      setCurrentTrack(nextSong);
     }
   };
 
@@ -209,13 +212,21 @@ function usePlayer(
       const { current } = audioRef;
       current.currentTime = value;
       play();
-    }, 60),
-    [audioContext, audioRef, setIsPlaying, setPlayerError]
+    }, 100),
+    [audioRef, play]
   );
 
   const handleChangeAudioToTime = (time: number) => {
-    if (audioRef.current) {
-      audioRef.current.pause();
+    if (audioRef.current && playPromiseRef.current !== undefined) {
+      playPromiseRef.current
+        ?.then(() => audioRef.current?.pause())
+        .catch((e) => {
+          if (e instanceof Error) {
+            setPlayerError(e.message);
+          }
+        });
+    } else {
+      audioRef.current?.pause();
     }
     updateProgressBar(time);
     setCurrentTime(time);
@@ -226,12 +237,7 @@ function usePlayer(
     debouncedChangeAudioTime(time);
   };
 
-  const handleClose = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const target = event.target as HTMLButtonElement;
-
+  const handleClose = () => {
     setShowVolume(false);
     pause();
     audioContext?.close().catch((e) => {
@@ -257,7 +263,6 @@ function usePlayer(
     setIsPlaying,
     handleAutoPlay,
     handleDurationChange,
-    handleSkiptrack,
     handleVolumeChange,
     handleChangeAudioToTime,
     togglePlayPause,
