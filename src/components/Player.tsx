@@ -100,7 +100,6 @@ function Player({
     } else {
       handleSetTrack(filteredTrackIds[currentTrackIndex + 1]);
     }
-    handleAutoPlay();
   };
 
   const handlePrevTrack = () => {
@@ -127,6 +126,7 @@ function Player({
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleOnCanPlay = () => {
     handleAutoPlay();
   };

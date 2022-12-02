@@ -1,11 +1,9 @@
 import { Icon } from "@iconify/react/dist/offline";
 import playIcon from "@iconify/icons-quill/play";
 import pauseIcon from "@iconify/icons-quill/pause";
-import shallow from "zustand/shallow";
 
 import styles from "../styles/Playlist.module.css";
 import usePlayer from "../hooks/usePlayer";
-import usePlayerStore from "../hooks/usePlayerStore";
 
 import {
   AudioRef,
@@ -40,15 +38,19 @@ function PlayList({
   volumeRef,
   setShowPlayer,
 }: Props) {
-  const { play, pause } = usePlayer(audioRef, progressBarRef, volumeRef);
-
-  const isPlaying = usePlayerStore((state) => state.isPlaying, shallow);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { play, pause, setIsPlaying, isPlaying } = usePlayer(
+    audioRef,
+    progressBarRef,
+    volumeRef
+  );
 
   const handleSelectTrack = (id: string) => {
     setShowPlayer(true);
     if (currentTrack.id !== id || (currentTrack.id === id && !isPlaying)) {
       handleSetTrack(id);
-      play();
+      setIsPlaying(true);
+      // play();
     } else {
       pause();
     }

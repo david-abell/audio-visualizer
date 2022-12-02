@@ -44,7 +44,6 @@ function usePlayer(
 
   const isMuted = volume === 0;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { audioContext, initAudioContext } = useAudioContext();
 
   // Store play promises to prevent promise interuption by calls to pause()
@@ -77,7 +76,6 @@ function usePlayer(
     if (audioRef.current) {
       updateProgressBar(audioRef.current.currentTime);
       setCurrentTime(audioRef.current.currentTime);
-      // console.log(current);
     }
   };
 
