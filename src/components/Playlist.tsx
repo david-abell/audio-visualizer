@@ -66,11 +66,16 @@ function PlayList({
 
   return (
     <div className={styles.container}>
+      {/* Album Cover */}
       <div className={styles.albumCover}>
         <img src={currentTrack.cover} alt="Album cover" />
       </div>
+
+      {/* Playlist */}
       <div className={styles.listContainer}>
         <h2>Playlist</h2>
+
+        {/* Playlist search */}
         <div className={styles.filterContainer}>
           <input type="text" onChange={(e) => handleFilterInput(e)} />
 
@@ -84,6 +89,8 @@ function PlayList({
             <option value="artist">Artist</option>
           </select>
         </div>
+
+        {/* Current playlist */}
         <ul>
           {!!filteredTracks.length &&
             filteredTracks.map((track: Track) => (
