@@ -38,8 +38,7 @@ function PlayList({
   volumeRef,
   setShowPlayer,
 }: Props) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { play, pause, setIsPlaying, isPlaying } = usePlayer(
+  const { pause, setIsPlaying, isPlaying } = usePlayer(
     audioRef,
     progressBarRef,
     volumeRef
@@ -50,7 +49,6 @@ function PlayList({
     if (currentTrack.id !== id || (currentTrack.id === id && !isPlaying)) {
       handleSetTrack(id);
       setIsPlaying(true);
-      // play();
     } else {
       pause();
     }
