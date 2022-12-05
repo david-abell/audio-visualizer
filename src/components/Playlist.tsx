@@ -69,10 +69,7 @@ function PlayList({
         <img src={currentTrack.cover} alt="Album cover" />
       </div>
 
-      {/* Playlist */}
       <div className={styles.listContainer}>
-        <h2>Playlist</h2>
-
         {/* Playlist search */}
         <div className={styles.filterContainer}>
           <input type="text" onChange={(e) => handleFilterInput(e)} />
@@ -82,42 +79,47 @@ function PlayList({
             aria-label="search criteria"
             onChange={(e) => handleSelectFilterBy(e)}
           >
-            {/* values are not typechecked here... */}
+            {/* option values are not typechecked... */}
             <option value="title">Title</option>
             <option value="artist">Artist</option>
           </select>
         </div>
 
-        {/* Current playlist */}
-        <ul>
-          {!!filteredTracks.length &&
-            filteredTracks.map((track: Track) => (
-              <li
-                key={track.title}
-                className={
-                  currentTrack.id === track.id
-                    ? [styles.listItem, styles.isPlaying].join(" ")
-                    : styles.listItem
-                }
-              >
-                <button
-                  type="button"
-                  onClick={() => handleSelectTrack(track.id)}
-                  className={styles.button}
+        {/* Playlist */}
+        <div className={styles.listContainer}>
+          {/* Current playlist */}
+          <ul>
+            {!!filteredTracks.length &&
+              filteredTracks.map((track: Track) => (
+                <li
+                  key={track.title}
+                  className={
+                    currentTrack.id === track.id
+                      ? [styles.listItem, styles.isPlaying].join(" ")
+                      : styles.listItem
+                  }
                 >
-                  <Icon
-                    icon={
-                      isPlaying && track.id === currentTrack.id
-                        ? pauseIcon
-                        : playIcon
-                    }
-                  />
-                  <h3>{track.title}</h3>
-                  <h4>{track.artist}</h4>
-                </button>
-              </li>
-            ))}
-        </ul>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectTrack(track.id)}
+                    className={styles.button}
+                  >
+                    <Icon
+                      icon={
+                        isPlaying && track.id === currentTrack.id
+                          ? pauseIcon
+                          : playIcon
+                      }
+                    />
+                    <div className={styles.titleGroup}>
+                      <h3>{track.title}</h3>
+                      <h4>{track.artist}</h4>
+                    </div>
+                  </button>
+                </li>
+              ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

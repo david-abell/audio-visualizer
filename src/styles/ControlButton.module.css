@@ -5,6 +5,7 @@
   padding: 0;
   background: transparent;
   transition: transform ease-in 60ms;
+  height: 2.6rem;
 }
 
 .button span {

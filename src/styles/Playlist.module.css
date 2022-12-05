@@ -15,9 +15,10 @@
   display: flex;
 }
 
-/* 
-.filter-container :first-child {
-} */
+.title-group {
+  display: flex;
+  flex-direction: column;
+}
 
 .filter-container select {
   font-size: 1.6rem;
@@ -30,7 +31,7 @@
 }
 
 .filter-container input {
-  width: 20rem;
+  width: 12rem;
   font-size: 1.2rem;
   padding: 0.5rem;
   margin-inline-end: 1rem;
@@ -42,9 +43,14 @@
   width: auto;
 }
 
+.album-cover img,
+.filter-container select,
+.filter-container input {
+  border-radius: 10px;
+}
+
 .container ul {
   padding: 0;
-  width: 37.5rem;
   max-width: calc(100vw - 1rem);
 }
 
@@ -57,8 +63,23 @@
   }
 
   .container ul {
+    width: 37.5rem;
     padding: unset;
     min-height: 40rem;
+  }
+
+  .filter-container input {
+    width: 20rem;
+  }
+
+  .title-group {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .title-group :last-child {
+    padding-inline: 0.5rem;
+    line-height: 1.2rem;
   }
 }
 
@@ -91,24 +112,16 @@
   transform: scale(1.1);
 }
 
-.list-item h3 {
+.title-group :first-child {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 500;
 }
 
-.list-item h4 {
+.title-group :last-child {
   margin: 0;
   font-size: 1rem;
   font-weight: 300;
-}
-
-/* .list-item :first-child {
-  margin-inline-start: -0.5rem;
-} */
-
-.list-item :last-child {
-  padding-inline: 0.5rem;
 }
 
 .button {
@@ -120,11 +133,6 @@
   padding: 0;
   width: 100%;
 }
-
-/* 
-.button :not(:first-child) {
-  padding-inline-start: 1rem;
-} */
 
 .button:hover {
   border-color: transparent;
