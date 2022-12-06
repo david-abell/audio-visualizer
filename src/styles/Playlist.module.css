@@ -4,7 +4,6 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  min-height: 32rem;
 }
 
 .list-container {
@@ -13,6 +12,15 @@
 
 .filter-container {
   display: flex;
+}
+
+.list-filter-container {
+  max-width: 420px;
+  border-radius: 10px;
+}
+
+.list-filter-container > :nth-child(2) {
+  padding-block-start: 1rem;
 }
 
 .title-group {
@@ -38,7 +46,6 @@
 }
 
 .album-cover {
-  height: 18.125rem;
   max-width: 100%;
   width: auto;
 }
@@ -51,20 +58,21 @@
 
 .container ul {
   padding: 0;
+  margin: 0;
   max-width: calc(100vw - 1rem);
+  background-color: aqua;
+  border-radius: 10px;
 }
+
+/* .container li:first-child {
+  margin-top: 1rem;
+} */
 
 @media only screen and (min-width: 768px) {
   .container {
     flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
+    align-items: flex-start;
     gap: 2rem;
-  }
-
-  .container ul {
-    width: 37.5rem;
-    padding: unset;
     min-height: 40rem;
   }
 
@@ -79,7 +87,7 @@
 
   .title-group :last-child {
     padding-inline: 0.5rem;
-    line-height: 1.2rem;
+    line-height: 1.625rem;
   }
 }
 
@@ -120,6 +128,7 @@
 
 .title-group :last-child {
   margin: 0;
+  height: 1.625rem;
   font-size: 1rem;
   font-weight: 300;
 }

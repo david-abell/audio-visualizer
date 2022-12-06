@@ -69,7 +69,7 @@ function PlayList({
         <img src={currentTrack.cover} alt="Album cover" />
       </div>
 
-      <div className={styles.listContainer}>
+      <div className={styles.listFilterContainer}>
         {/* Playlist search */}
         <div className={styles.filterContainer}>
           <input type="text" onChange={(e) => handleFilterInput(e)} />
@@ -88,9 +88,9 @@ function PlayList({
         {/* Playlist */}
         <div className={styles.listContainer}>
           {/* Current playlist */}
-          <ul>
-            {!!filteredTracks.length &&
-              filteredTracks.map((track: Track) => (
+          {!!filteredTracks.length && (
+            <ul>
+              {filteredTracks.map((track: Track) => (
                 <li
                   key={track.title}
                   className={
@@ -111,14 +111,15 @@ function PlayList({
                           : playIcon
                       }
                     />
-                    <div className={styles.titleGroup}>
+                    <hgroup className={styles.titleGroup}>
                       <h3>{track.title}</h3>
-                      <h4>{track.artist}</h4>
-                    </div>
+                      <p>{track.artist}</p>
+                    </hgroup>
                   </button>
                 </li>
               ))}
-          </ul>
+            </ul>
+          )}
         </div>
       </div>
     </div>
