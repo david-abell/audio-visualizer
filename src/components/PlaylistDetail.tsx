@@ -1,7 +1,10 @@
-import { SongCollection, Track, TracksMap } from "../types/types";
-import styleUtils from "../styles/styleUtils.module.css";
+import { Icon } from "@iconify/react";
 import formatDescriptiveTime from "../utils/formatDescriptiveTime";
 import getArtistSummary from "../utils/getArtistSummary";
+
+import styles from "../styles/PlaylistDetail.module.css";
+
+import { SongCollection, Track, TracksMap } from "../types/types";
 
 type Props = {
   tracks: TracksMap;
@@ -19,7 +22,7 @@ function PlaylistDetail({ tracks, currentTrack, setShuffleCount }: Props) {
     .reduce((acc, trackLength) => acc + trackLength, 0);
 
   const songCollection: SongCollection = {
-    title: "Free music archive selection",
+    title: "Free music beats",
     description: "Chill with a selection of songs from the free music archive",
     tracks,
   };
@@ -29,34 +32,37 @@ function PlaylistDetail({ tracks, currentTrack, setShuffleCount }: Props) {
   };
 
   return (
-    <div>
-      <h2>{songCollection.title}</h2>
-      <div className={[styleUtils.flex, styleUtils.gap].join(" ")}>
-        {/* Album cover */}
-        <div>
-          <img alt="Album cover" src={currentTrack.cover} />
-        </div>
+    <div className={styles.container}>
+      {/* Album cover */}
+      <div className={styles.albumCover}>
+        <img alt="Album cover" src={currentTrack.cover} />
+      </div>
 
-        <div className={[styleUtils.flexCol, styleUtils.gap].join(" ")}>
-          {/* Playlist details summary */}
-          <div>{trackCount} Songs</div>
+      <div className={styles.content}>
+        <h2>{songCollection.title}</h2>
 
-          <div>
+        {/* Playlist details summary */}
+        <div className={styles.summary}>
+          <h3>
+            {trackCount} Songs &bull; {formatDescriptiveTime(totalPlaytime)}
+          </h3>
+
+          <h3>
             {artistCount} Artists: {artistSummary}
-          </div>
-
-          <div>Total Playtime: {formatDescriptiveTime(totalPlaytime)}</div>
+          </h3>
 
           <p>{songCollection.description}</p>
-
-          {/* Play controls */}
-          <div>
-            <button type="button" onClick={handleShuffle}>
-              Shuffle
-            </button>
-            <button type="button">Play all</button>
-          </div>
         </div>
+
+        {/* Play controls */}
+        <button
+          type="button"
+          onClick={handleShuffle}
+          className={styles.shuffleButton}
+        >
+          <Icon icon="akar-icons:arrow-shuffle" inline />
+          <span>Shuffle</span>
+        </button>
       </div>
     </div>
   );
