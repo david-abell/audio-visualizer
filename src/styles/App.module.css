@@ -25,6 +25,10 @@
   text-align: center;
 }
 
+.content > :not(:first-child) {
+  margin-block-start: 1rem;
+}
+
 .footer {
   height: 6.5rem;
   margin-block-start: 2rem;

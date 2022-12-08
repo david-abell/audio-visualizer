@@ -1,0 +1,63 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.album-cover {
+  max-width: 100%;
+  width: auto;
+}
+
+.album-cover img {
+  border-color: #28272a;
+}
+
+.summary {
+  text-align: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0;
+
+  /* max-width: 18.125rem; */
+}
+
+.summary p {
+  margin: 0;
+}
+
+.shuffle-button {
+  border: 1px solid #28272a;
+  max-width: 8rem;
+  flex-basis: 0;
+}
+
+.shuffle-button :not(:first-child) {
+  padding-inline-start: 0.5rem;
+}
+
+@media only screen and (min-width: 768px) {
+  .container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .summary {
+    text-align: start;
+  }
+}

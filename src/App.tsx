@@ -1,9 +1,13 @@
-import { useRef, useState } from "react";
-import styles from "./styles/App.module.css";
+import { useMemo, useRef, useState } from "react";
+import { shuffle } from "lodash";
+
 import Player from "./components/Player";
 import SpectrumGraph from "./components/SpectrumGraph";
 import library from "./assets/library";
 import PlayList from "./components/Playlist";
+import PlaylistDetail from "./components/PlaylistDetail";
+
+import styles from "./styles/App.module.css";
 
 import { FilterBy, Track, TracksMap } from "./types/types";
 
@@ -17,10 +21,19 @@ function App() {
   const [showPlayer, setShowPlayer] = useState(false);
   const [trackFilter, setTrackFilter] = useState("");
   const [filterBy, setFilterBy] = useState<FilterBy>("title");
+  const [shuffleCount, setShuffleCount] = useState(0);
 
-  const filteredTracks = [...tracks.values()].filter((track: Track) =>
-    track[filterBy].toLowerCase().includes(trackFilter.toLowerCase().trim())
-  );
+  const filteredTracks = useMemo(() => {
+    const filterTracks = [...tracks.values()].filter((track: Track) =>
+      track[filterBy].toLowerCase().includes(trackFilter.toLowerCase().trim())
+    );
+
+    if (shuffleCount > 0) {
+      return shuffle(filterTracks);
+    }
+
+    return filterTracks;
+  }, [shuffleCount, tracks, filterBy, trackFilter]);
 
   const handleSetTrack = (id: string) => {
     const nextTrack = tracks.get(id);
@@ -33,6 +46,11 @@ function App() {
     <div className={styles.app}>
       <div className={styles.content}>
         <h1>Spectrum Audio</h1>
+        <PlaylistDetail
+          tracks={tracks}
+          currentTrack={currentTrack}
+          setShuffleCount={setShuffleCount}
+        />
         <PlayList
           currentTrack={currentTrack}
           handleSetTrack={handleSetTrack}

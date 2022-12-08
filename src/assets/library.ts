@@ -10,6 +10,7 @@ const library: Track[] = [
     artist: "Audiorezout",
     url: "GothamCity.mp3",
     id: uuidv4(),
+    length: 99,
   },
   {
     title: "Hammer War",
@@ -20,6 +21,7 @@ const library: Track[] = [
     artist: "Audiorezout",
     url: "Hammerwar.mp3",
     id: uuidv4(),
+    length: 147,
   },
   {
     title: "Sailing Away",
@@ -30,6 +32,7 @@ const library: Track[] = [
     artist: "HoliznaCC0",
     url: "SailingAway.mp3",
     id: uuidv4(),
+    length: 157,
   },
   {
     title: "Tuesday",
@@ -37,6 +40,7 @@ const library: Track[] = [
     artist: "Ketsa",
     url: "Tuesday.mp3",
     id: uuidv4(),
+    length: 213,
   },
   {
     title: "Orleans",
@@ -44,6 +48,7 @@ const library: Track[] = [
     artist: "Ketsa",
     url: "Orleans.mp3",
     id: uuidv4(),
+    length: 184,
   },
   {
     title: "Upbeat Funk Pop",
@@ -54,6 +59,7 @@ const library: Track[] = [
     artist: "Scott Holmes Music",
     url: "UpbeatFunkPop.mp3",
     id: uuidv4(),
+    length: 103,
   },
   {
     title: "Epic Cinematic",
@@ -64,6 +70,7 @@ const library: Track[] = [
     artist: "Scott Holmes Music",
     url: "EpicCinematic.mp3",
     id: uuidv4(),
+    length: 193,
   },
   {
     title: "French Girls & Cigarettes",
@@ -72,6 +79,7 @@ const library: Track[] = [
     artist: "Mr Smith",
     url: "FrenchGirls%26Cigarettes.mp3",
     id: uuidv4(),
+    length: 133,
   },
   {
     title: "Pursuit Of Life",
@@ -80,6 +88,7 @@ const library: Track[] = [
     artist: "Kirk Osamayo",
     url: "PursuitOfLife.mp3",
     id: uuidv4(),
+    length: 161,
   },
   {
     title: "Blue Skies",
@@ -88,6 +97,7 @@ const library: Track[] = [
     artist: "Derek Clegg",
     url: "BlueSkies.mp3",
     id: uuidv4(),
+    length: 192,
   },
   {
     title: "Master of the Streats",
@@ -98,6 +108,7 @@ const library: Track[] = [
     artist: "Jonas Hipper",
     url: "MasterOfTheStreets.mp3",
     id: uuidv4(),
+    length: 133,
   },
   {
     title: "Let's Stay In Love",
@@ -106,6 +117,7 @@ const library: Track[] = [
     artist: "The Years",
     url: "Let'sStayInLove.mp3",
     id: uuidv4(),
+    length: 331,
   },
 ];
 
