@@ -15,11 +15,13 @@
 }
 
 .list-filter-container {
-  max-width: 400px;
+  width: 100%;
+
+  /* max-width: 400px; */
   border-radius: 10px;
 }
 
-.list-filter-container > :nth-child(2) {
+.list-filter-container > :not(:first-child) {
   padding-block-start: 1rem;
 }
 
@@ -38,7 +40,6 @@
 
 .filter-container select {
   font-size: 1.6rem;
-  padding: 0.5rem;
 }
 
 .filter-container option {
@@ -47,18 +48,11 @@
 }
 
 .filter-container input {
-  width: 12rem;
   font-size: 1.2rem;
   padding: 0.5rem;
-  margin-inline-end: 1rem;
+  flex-grow: 1;
 }
 
-.album-cover {
-  max-width: 100%;
-  width: auto;
-}
-
-.album-cover img,
 .filter-container select,
 .filter-container input {
   border-color: #28272a;
