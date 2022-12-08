@@ -6,9 +6,10 @@ import getArtistSummary from "../utils/getArtistSummary";
 type Props = {
   tracks: TracksMap;
   currentTrack: Track;
+  setShuffleCount: React.Dispatch<React.SetStateAction<number>>;
 };
 
-function PlaylistDetail({ tracks, currentTrack }: Props) {
+function PlaylistDetail({ tracks, currentTrack, setShuffleCount }: Props) {
   const artists = new Set([...tracks].map(([, track]) => track.artist));
   const artistCount = artists.size;
   const artistSummary = getArtistSummary(artists);
@@ -21,6 +22,10 @@ function PlaylistDetail({ tracks, currentTrack }: Props) {
     title: "Free music archive selection",
     description: "Chill with a selection of songs from the free music archive",
     tracks,
+  };
+
+  const handleShuffle = () => {
+    setShuffleCount((prev) => prev + 1);
   };
 
   return (
@@ -46,7 +51,9 @@ function PlaylistDetail({ tracks, currentTrack }: Props) {
 
           {/* Play controls */}
           <div>
-            <button type="button">Shuffle</button>
+            <button type="button" onClick={handleShuffle}>
+              Shuffle
+            </button>
             <button type="button">Play all</button>
           </div>
         </div>
