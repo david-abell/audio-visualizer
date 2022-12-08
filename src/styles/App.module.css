@@ -1,6 +1,7 @@
 .app {
   width: 100%;
-  min-height: 100vh;
+
+  /* min-height: 100vh; */
   border: 1px solid transparent;
   outline: 1px solid transparent;
   border-radius: 0;
@@ -29,10 +30,30 @@
   margin-block-start: 1rem;
 }
 
+.header {
+  margin-block-end: 2rem;
+}
+
 .footer {
   height: 6.5rem;
   margin-block-start: 2rem;
+}
+
+.header,
+.footer {
   padding-block: 1rem;
+  background: linear-gradient(90deg, #28272a, rgba(99 99 99 / 100%) 100%);
+  width: 100%;
+  text-align: center;
+}
+
+.footer *,
+.header * {
+  color: rgba(255 255 255 / 87%);
+}
+
+.player-footer {
+  margin-block-end: 6rem;
 }
 
 .fixed-bottom {

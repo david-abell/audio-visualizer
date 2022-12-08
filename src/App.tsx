@@ -44,8 +44,10 @@ function App() {
 
   return (
     <div className={styles.app}>
-      <div className={styles.content}>
+      <header className={styles.header}>
         <h1>Spectrum Audio</h1>
+      </header>
+      <div className={styles.content}>
         <PlaylistDetail
           tracks={tracks}
           currentTrack={currentTrack}
@@ -63,10 +65,16 @@ function App() {
           filterBy={filterBy}
           setFilterBy={setFilterBy}
         />
-        <div className={styles.footer}>
-          <h5>This is the footer</h5>
-        </div>
       </div>
+      <footer
+        className={
+          !showPlayer
+            ? styles.footer
+            : [styles.footer, styles.playerFooter].join(" ")
+        }
+      >
+        <h5>This is the footer</h5>
+      </footer>
       {showPlayer && (
         <div className={styles.fixedBottom}>
           <SpectrumGraph audioRef={audioRef} />
