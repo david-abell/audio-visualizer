@@ -16,8 +16,6 @@
 
 .list-filter-container {
   width: 100%;
-
-  /* max-width: 400px; */
   border-radius: 10px;
 }
 
@@ -105,22 +103,16 @@
 
 .list-item:hover {
   background-color: #efefef;
-
-  /* border-bottom: 2px solid rgba(85 85 85 / 60%); */
 }
 
 .list-item svg {
   height: 3rem;
   width: auto;
   color: #efefef;
-
-  /* margin-inline-start: -0.75rem; */
 }
 
 .list-item:hover svg {
   transition: transform ease-in 60ms;
-
-  /* transform: scale(1.1); */
   color: #28272a;
 }
 
