@@ -7,6 +7,8 @@ export interface LinePath {
   width: number;
 }
 
+type SecondLength = number;
+
 // export type Track = string;
 export interface Track {
   title: string;
@@ -14,9 +16,16 @@ export interface Track {
   artist: string;
   url: string;
   id: string;
+  length: SecondLength;
 }
 
 export type TracksMap = Map<string, Track>;
+
+export interface SongCollection {
+  title: string;
+  description: string;
+  tracks: TracksMap;
+}
 
 export type TrackFilters = "title" | "artist";
 

@@ -6,6 +6,7 @@ import library from "./assets/library";
 import PlayList from "./components/Playlist";
 
 import { FilterBy, Track, TracksMap } from "./types/types";
+import PlaylistDetail from "./components/PlaylistDetail";
 
 function App() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -33,6 +34,7 @@ function App() {
     <div className={styles.app}>
       <div className={styles.content}>
         <h1>Spectrum Audio</h1>
+        <PlaylistDetail tracks={tracks} currentTrack={currentTrack} />
         <PlayList
           currentTrack={currentTrack}
           handleSetTrack={handleSetTrack}

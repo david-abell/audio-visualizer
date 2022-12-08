@@ -65,9 +65,9 @@ function PlayList({
   return (
     <div className={styles.container}>
       {/* Album Cover */}
-      <div className={styles.albumCover}>
+      {/* <div className={styles.albumCover}>
         <img src={currentTrack.cover} alt="Album cover" />
-      </div>
+      </div> */}
 
       <div className={styles.listFilterContainer}>
         {/* Playlist search */}
