@@ -15,7 +15,7 @@
 }
 
 .list-filter-container {
-  max-width: 380px;
+  max-width: 400px;
   border-radius: 10px;
 }
 
@@ -26,6 +26,10 @@
 .title-group {
   display: flex;
   flex-direction: column;
+}
+
+.title-group * {
+  color: inherit;
 }
 
 .title-group > :first-child {
@@ -57,19 +61,14 @@
 .album-cover img,
 .filter-container select,
 .filter-container input {
-  border-radius: 10px;
+  border-color: #28272a;
 }
 
 .container ul {
   padding: 0;
   margin: 0;
-  background-color: aqua;
-  border-radius: 10px;
+  background-color: rgba(85 85 85 / 60%);
 }
-
-/* .container li:first-child {
-  margin-top: 1rem;
-} */
 
 @media only screen and (min-width: 768px) {
   .container {
@@ -90,7 +89,6 @@
 
   .title-group :last-child {
     padding-inline: 0.5rem;
-    line-height: 1.625rem;
   }
 }
 
@@ -102,25 +100,34 @@
 
 .is-playing,
 .list-item:hover {
-  background-color: rgba(85 85 85 / 5%);
-  border-bottom: 2px solid rgba(85 85 85 / 60%);
+  background-color: #efefef;
+  box-shadow: 0 1px 0 rgba(85 85 85 / 60%), 0 -1px 0 rgba(85 85 85 / 60%);
+}
+
+.is-playing *,
+.list-item:hover * {
+  color: #28272a;
 }
 
 .list-item:hover {
-  background-color: rgba(85 85 85 / 5%);
-  border-bottom: 2px solid rgba(85 85 85 / 60%);
+  background-color: #efefef;
+
+  /* border-bottom: 2px solid rgba(85 85 85 / 60%); */
 }
 
 .list-item svg {
   height: 3rem;
   width: auto;
-  color: #213547;
-  margin-inline-start: -0.75rem;
+  color: #efefef;
+
+  /* margin-inline-start: -0.75rem; */
 }
 
 .list-item:hover svg {
   transition: transform ease-in 60ms;
-  transform: scale(1.1);
+
+  /* transform: scale(1.1); */
+  color: #28272a;
 }
 
 .title-group :first-child {
@@ -131,7 +138,10 @@
 
 .title-group :last-child {
   margin: 0;
-  height: 1.625rem;
+
+  /* This magic number sets line height to match first title group h4 element height for text alignment */
+  height: 1.6563rem;
+  line-height: 1.6563rem;
   font-size: 1rem;
   font-weight: 300;
 }
@@ -148,4 +158,14 @@
 
 .button:hover {
   border-color: transparent;
+}
+
+@media (prefers-color-scheme: light) {
+  .container ul {
+    background-color: #d0cfd3;
+  }
+
+  .list-item svg {
+    color: #28272a;
+  }
 }
