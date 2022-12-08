@@ -32,7 +32,7 @@ function App() {
   return (
     <div className={styles.app}>
       <div className={styles.content}>
-        <h1>Spectrum Audio Player</h1>
+        <h1>Spectrum Audio</h1>
         <PlayList
           currentTrack={currentTrack}
           handleSetTrack={handleSetTrack}
