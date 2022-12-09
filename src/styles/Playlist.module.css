@@ -90,6 +90,10 @@
   border-bottom: 2px solid transparent;
 }
 
+.list-item:not(:last-child) {
+  box-shadow: 0 1px 0 #8a8a8a;
+}
+
 .is-playing,
 .list-item:hover {
   background-color: #efefef;
@@ -158,5 +162,9 @@
 
   .list-item svg {
     color: #28272a;
+  }
+
+  .list-item {
+    box-shadow: 0 1px 0 rgba(85 85 85 / 10%), 0 -1px 0 rgba(85 85 85 / 10%);
   }
 }
