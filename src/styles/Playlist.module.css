@@ -142,6 +142,11 @@
   width: 100%;
 }
 
+.button > :last-child {
+  margin-inline-start: auto;
+  margin-inline-end: 0.5rem;
+}
+
 .button:hover {
   border-color: transparent;
 }

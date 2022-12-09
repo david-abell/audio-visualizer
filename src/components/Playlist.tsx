@@ -12,6 +12,7 @@ import {
   Track,
   TrackFilters,
 } from "../types/types";
+import formatTime from "../utils/formatTime";
 
 type Props = {
   currentTrack: Track;
@@ -115,6 +116,7 @@ function PlayList({
                       <h3>{track.title}</h3>
                       <p>{track.artist}</p>
                     </hgroup>
+                    <span>{formatTime(track.length, true)}</span>
                   </button>
                 </li>
               ))}
