@@ -27,14 +27,6 @@
   border-color: transparent;
 }
 
-/* .button:hover {
-  border-color: #646cff;
-} */
-
-/* .button:hover svg {
-  border-color: #646cff;
-} */
-
 .button:hover svg {
   transform: scale(1.1);
 }
