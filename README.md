@@ -1,6 +1,6 @@
 # React Audio visualizer
 
-> An audio player and live spectogram.
+> An audio player and live spectrogram.
 > Live demo [_here_](https://spectrum-audio.netlify.app).
 
 ## Table of Contents
