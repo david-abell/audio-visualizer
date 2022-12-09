@@ -73,7 +73,7 @@ function SpectrumGraph({ audioRef }: Props) {
     // React chokes at counts greater than 256 with this draw method.
     analyzerRef.current = new AnalyserNode(audioContext, {
       fftSize: 256,
-      maxDecibels: -5,
+      // maxDecibels: -5,
       minDecibels: -90,
       // smoothingTimeConstant: 0.8, // default value 0.8
     });
