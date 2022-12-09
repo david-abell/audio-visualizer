@@ -1,9 +1,11 @@
 # React Audio visualizer
 
 > An audio player and live spectogram.
-> Live demo [_soon to be here_](https://www.example.com). <!-- If you have the project hosted somewhere, include the link here. -->
+> Live demo [_here_](https://spectrum-audio.netlify.app).
 
 ## Table of Contents
+
+---
 
 - [General Info](#general-information)
 - [Technologies Used](#technologies-used)
@@ -14,68 +16,76 @@
 - [Project Status](#project-status)
 - [Room for Improvement](#room-for-improvement)
 - [Acknowledgements](#acknowledgements)
-- [Contact](#contact)
-<!-- * [License](#license) -->
+<!-- - [Contact](#contact) -->
 
 ## General Information
 
-- Provide general information about your project here.
-- What problem does it (intend to) solve?
-- What is the purpose of your project?
-- Why did you undertake it?
-- Why did you build this way?
-<!-- You don't have to answer all the questions - just the ones relevant to your project. -->
+---
+
+- Project began while experimenting with React and audio spectogram graphs built with D3.
+- Initially curious about how React performed with on the fly svg graph generation (not good), I expanded this project into a fully functional audio app.
+- No third party audio integrations such as Howler.js were used. This lead to both admiration for how powerful the web audio api can be, but also, frustration with some of its limiting factors including long standing chrome bugs.
+- Some specific React technology used was a heavy reliance on useCallback and Refs for the custom audio hook as well as less common hooks such as useLayoutEffect as part of the custom hook written to use requestAnimationFrame with React.
 
 ## Technologies Used
+
+---
 
 - Vite.js
 - React.js
 - Typescript
 - D3.js svg path generation
 - Zustand state management
+- Uuid for library ids
+- a few functions from Lodash and usehooks-ts such as useInterval and useMediaQuery that weren't worth reinventing the wheel for.
 
 ## Features
 
-List the ready features here:
+---
 
 - Audio spectrum displays live track frequency Hz, color coded by decibel range.
-- Awesome feature 2
-- Awesome feature 3
 
 ## Screenshots
 
-![Example screenshot](./img/screenshot.png)
+![Example desktop screenshot](./img/screenshot-desktop.png)
 
-<!-- If you have screenshots you'd like to share, include them here. -->
+<details>
+
+  <summary>Click here to show mobile screenshot</summary>
+
+![Example mobile screenshot](./img/screenshot-mobile.png)
+
+</details>
+
+<br/><br/>
 
 ## Setup
 
-What are the project requirements/dependencies? Where are they listed? A requirements.txt or a Pipfile.lock file perhaps? Where is it located?
+---
 
-Proceed to describe how to install / setup one's local environment / get started with the project.
+`npm install` No other dependencies required.
 
 ## Usage
 
-How does one go about using it?
-Provide various use cases and code examples here.
+- `npm run dev`
 
-`write-your-code-here`
+  or
+
+- `npm run build` then `npm run preview`
 
 ## Room for Improvement
 
-Include areas you believe need improvement / could be improved. Also add TODOs for future development. If I had more time I would...
+---
 
 Room for improvement:
 
-- Improvement to be done 1
-- Improvement to be done 2
+- A button is needed for user to disable the spectogram animation but this may require architectural changes to the useAudio hook...See chrome issue below
 
 To do:
 
-- Feature to be added 1
-- Feature to be added 2
+- Unit tests
 
-## Lessons learned
+## Lessons learned / Issues
 
 Include unexpected issues / bugs encountered. How were they resolved?
 
@@ -87,14 +97,7 @@ Include unexpected issues / bugs encountered. How were they resolved?
 
 ## Acknowledgements
 
-Give credit here.
-
 - This project was inspired by Jack Herrington's very cool [60FPS Solid-JS Audio Spectrum Visualizer Project](https://www.youtube.com/watch?v=Xt1dNdJpgw4)
+- All audio tracks from [https://freemusicarchive.org](https://freemusicarchive.org)
 
-## Contact
-
-<!-- Optional -->
-<!-- ## License -->
-<!-- This project is open source and available under the [... License](). -->
-
-<!-- You don't have to include all sections - just the one's relevant to your project -->
+<!-- ## Contact -->
