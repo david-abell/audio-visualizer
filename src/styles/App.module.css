@@ -8,6 +8,7 @@
   align-items: center;
   justify-content: flex-start;
   margin: 0 auto;
+  min-height: 100vh;
 }
 
 .content {
