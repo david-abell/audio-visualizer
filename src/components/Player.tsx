@@ -49,6 +49,7 @@ function Player({
     isMuted,
     toggleIsMuted,
     pause,
+    play,
   } = usePlayer(audioRef, progressBarRef, volumeRef);
 
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -130,6 +131,13 @@ function Player({
   const handleOnCanPlay = () => {
     handleAutoPlay();
   };
+
+  // sync playlist play state to player
+  useEffect(() => {
+    if (isPlaying && audioRef.current?.paused) {
+      play();
+    }
+  }, [isPlaying, audioRef, play]);
 
   return (
     <div className={styles.container}>
