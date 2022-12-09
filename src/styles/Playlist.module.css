@@ -23,11 +23,6 @@
   padding-block-start: 1rem;
 }
 
-.title-group {
-  display: flex;
-  flex-direction: column;
-}
-
 .title-group * {
   color: inherit;
 }
@@ -74,9 +69,8 @@
     width: 20rem;
   }
 
-  .title-group {
-    display: flex;
-    flex-direction: row;
+  .title-group * {
+    display: inline-block;
   }
 
   .title-group :last-child {
@@ -128,10 +122,6 @@
 
 .title-group :last-child {
   margin: 0;
-
-  /* This magic number sets line height to match first title group h4 element height for text alignment */
-  height: 1.6563rem;
-  line-height: 1.6563rem;
   font-size: 1rem;
   font-weight: 300;
 }
