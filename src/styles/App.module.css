@@ -10,12 +10,6 @@
   margin: 0 auto;
 }
 
-@media only screen and (min-width: 768px) {
-  .app {
-    justify-content: flex-start;
-  }
-}
-
 .content {
   width: 64rem;
   max-width: 100%;
@@ -59,4 +53,22 @@
   left: 0;
   width: 100%;
   pointer-events: none;
+}
+
+@media only screen and (min-width: 768px) {
+  .app {
+    justify-content: flex-start;
+  }
+
+  .header {
+    margin-block-end: 4rem;
+  }
+
+  .footer {
+    margin-block-start: 4rem;
+  }
+
+  .player-footer {
+    height: 24rem;
+  }
 }
