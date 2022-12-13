@@ -6,11 +6,18 @@ export interface UseAudioContext {
   initAudioContext: () => AudioContext;
 }
 
+declare global {
+  interface Window {
+    AudioContext: typeof AudioContext;
+    webkitAudioContext: typeof AudioContext;
+  }
+}
+
 const useAudioContext = create<UseAudioContext>()((set) => ({
   audioContext: undefined,
   error: "",
   initAudioContext: () => {
-    const context = new AudioContext();
+    const context = new (window.AudioContext || window.webkitAudioContext)();
     context
       .resume()
       .then(() => set({ audioContext: context }))
