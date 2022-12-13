@@ -16,6 +16,10 @@ export type ControlProps = {
   onKeyup?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
 };
 
+type HandlerEvent =
+  | React.MouseEvent<HTMLButtonElement>
+  | React.TouchEvent<HTMLButtonElement>;
+
 function ControlButton({
   handler,
   disabled,
@@ -24,7 +28,7 @@ function ControlButton({
   varient = "dark",
   labeled = true,
 }: ControlProps) {
-  const preventDefaultHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const preventDefaultHandler = (e: HandlerEvent) => {
     if (e) {
       e.preventDefault();
     }
@@ -35,6 +39,7 @@ function ControlButton({
     <button
       type="button"
       onClick={(e) => preventDefaultHandler(e)}
+      onTouchEnd={(e) => preventDefaultHandler(e)}
       className={styles.button}
       disabled={disabled}
       onKeyUp={onKeyup ? (e) => onKeyup(e) : undefined}
