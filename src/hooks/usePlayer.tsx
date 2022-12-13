@@ -82,9 +82,23 @@ function usePlayer(
   useInterval(whilePlaying, isPlaying ? 60 : null);
 
   const play = useCallback(() => {
-    setIsPlaying(true);
-    if (!audioContext || audioContext.state === "closed") {
-      initAudioContext();
+    let context = audioContext;
+
+    switch (context?.state) {
+      case "running":
+        break;
+
+      case "suspended":
+        context.resume().catch((e) => {
+          if (e instanceof Error) {
+            setPlayerError(e.message);
+          }
+        });
+        setIsPlaying(true);
+        break;
+
+      default:
+        context = initAudioContext();
     }
 
     playPromiseRef.current = audioRef.current?.play().catch((e) => {
@@ -92,14 +106,7 @@ function usePlayer(
         setPlayerError(e.message);
       }
     });
-
-    if (audioContext?.state === "suspended") {
-      audioContext.resume().catch((e) => {
-        if (e instanceof Error) {
-          setPlayerError(e.message);
-        }
-      });
-    }
+    setIsPlaying(true);
   }, [
     audioContext,
     audioRef,
@@ -111,7 +118,7 @@ function usePlayer(
 
   const pause = useCallback(() => {
     setIsPlaying(false);
-    if (audioContext?.state !== "closed") {
+    if (audioContext?.state === "running") {
       audioContext?.suspend().catch((e) => {
         if (e instanceof Error) {
           setPlayerError(e.message);
