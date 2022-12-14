@@ -39,7 +39,7 @@ function PlayList({
   volumeRef,
   setShowPlayer,
 }: Props) {
-  const { pause, setIsPlaying, isPlaying } = usePlayer(
+  const { play, pause, isPlaying } = usePlayer(
     audioRef,
     progressBarRef,
     volumeRef
@@ -49,7 +49,7 @@ function PlayList({
     setShowPlayer(true);
     if (currentTrack.id !== id || (currentTrack.id === id && !isPlaying)) {
       handleSetTrack(id);
-      setIsPlaying(true);
+      play();
     } else {
       pause();
     }

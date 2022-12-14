@@ -44,7 +44,7 @@ function usePlayer(
 
   const isMuted = volume === 0;
 
-  const { audioContext, initAudioContext } = useAudioContext();
+  const { audioContext, initAudioContext, setAudioContext } = useAudioContext();
 
   // Store play promises to prevent promise interuption by calls to pause()
   const playPromiseRef = useRef<Promise<void> | undefined>();
@@ -100,19 +100,23 @@ function usePlayer(
         context = initAudioContext();
     }
 
+    setAudioContext(context);
+
     playPromiseRef.current = audioRef.current?.play().catch((e) => {
+      setIsPlaying(false);
       if (e instanceof Error) {
         setPlayerError(e.message);
       }
     });
+
     setIsPlaying(true);
   }, [
     audioContext,
     audioRef,
     initAudioContext,
+    setAudioContext,
     setIsPlaying,
     setPlayerError,
-    playPromiseRef,
   ]);
 
   const pause = useCallback(() => {
@@ -245,12 +249,26 @@ function usePlayer(
 
   const handleClose = () => {
     setShowVolume(false);
-    pause();
-    audioContext?.close().catch((e) => {
-      if (e instanceof Error) {
-        setPlayerError(e.message);
-      }
-    });
+
+    // Wait for any pending play requests to complete before closing context
+    if (audioRef.current && playPromiseRef.current !== undefined) {
+      playPromiseRef.current
+        ?.then(() => audioRef.current?.pause())
+        .then(() => audioContext?.close())
+        .catch((e) => {
+          if (e instanceof Error) {
+            setPlayerError(e.message);
+          }
+        });
+    } else {
+      audioContext?.close().catch((e) => {
+        if (e instanceof Error) {
+          setPlayerError(e.message);
+        }
+      });
+    }
+
+    setIsPlaying(false);
   };
 
   return {
