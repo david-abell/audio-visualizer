@@ -94,7 +94,6 @@ function usePlayer(
             setPlayerError(e.message);
           }
         });
-        setIsPlaying(true);
         break;
 
       default:
