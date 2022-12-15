@@ -12,7 +12,8 @@ function getLinePaths(data: RawData, viewBox: ViewBoxMap): LinePath[] {
   let currentX = SVGMinX;
 
   for (const value of data) {
-    if (!value) break;
+    // eslint-disable-next-line no-continue
+    if (!value) continue;
     const width = (value / total) * SVGWidth;
     const scaledValue = value / 255;
     const barHeight = SVGHeight * scaledValue;
