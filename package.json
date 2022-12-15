@@ -7,7 +7,9 @@
     "dev": "vite --host",
     "build": "tsc && vite build",
     "preview": "vite preview --host",
-    "lint": "eslint . --ext .ts,.tsx"
+    "lint": "eslint . --ext .ts,.tsx",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@iconify/icons-quill": "^1.2.1",
@@ -23,12 +25,14 @@
     "zustand": "^4.1.4"
   },
   "devDependencies": {
+    "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.39.0",
     "@vitejs/plugin-react": "^2.1.0",
+    "@vitest/coverage-c8": "^0.25.8",
     "autoprefixer": "^10.4.12",
     "eslint": "^8.2.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -48,7 +52,8 @@
     "typescript-plugin-css-modules": "^3.4.0",
     "vite": "^3.1.0",
     "vite-plugin-eslint": "^1.8.1",
-    "vite-plugin-stylelint": "^3.0.7"
+    "vite-plugin-stylelint": "^3.0.7",
+    "vitest": "^0.25.8"
   },
   "browserslist": [
     "defaults"
