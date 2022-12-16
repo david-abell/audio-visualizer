@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
-import { ViewBoxMap } from "../../src/components/SpectrumGraph";
+import { ViewBoxMap } from "../../components/SpectrumGraph";
 
-import getLinePaths from "../../src/utils/getLinePaths";
+import getLinePaths from "../getLinePaths";
 
 test("should return paths for all data except 0s", () => {
   const testData = [0, 255, 255, 255, 10, 5];

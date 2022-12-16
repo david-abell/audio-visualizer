@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import formatDescriptiveTime from "../../src/utils/formatDescriptiveTime";
+import formatDescriptiveTime from "../formatDescriptiveTime";
 
 test("should be 0 minutes", () => {
   expect(formatDescriptiveTime(59.999)).toBe("0 minutes");

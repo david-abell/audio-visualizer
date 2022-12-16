@@ -28,6 +28,6 @@
     ],
     "types": ["vitest/globals"]
   },
-  "include": ["src", "custom.d.ts", "tests"],
+  "include": ["src", "custom.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

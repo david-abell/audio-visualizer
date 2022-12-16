@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import formatTime from "../../src/utils/formatTime";
+import formatTime from "../formatTime";
 
 test("should be 0", () => {
   expect(formatTime(0)).toBe("00:00");

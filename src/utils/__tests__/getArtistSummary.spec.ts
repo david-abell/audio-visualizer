@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import getArtistSummary from "../../src/utils/getArtistSummary";
+import getArtistSummary from "../getArtistSummary";
 
 test("should return a string", () => {
   const artists = new Set(["John", "Jack", "Mary", "Jane"]);
