@@ -132,7 +132,7 @@ function Player({
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-testid="audio-player">
       {/* Audio source node */}
       <audio
         crossOrigin="anonymous"
