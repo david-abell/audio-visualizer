@@ -36,6 +36,10 @@
       "ForInStatement",
       "LabeledStatement",
       "WithStatement"
+    ],
+    "import/no-extraneous-dependencies": [
+      "error",
+      { "devDependencies": ["testSetup.ts", "**/*.spec.ts", "**/*.spec.tsx"] }
     ]
   }
 }
