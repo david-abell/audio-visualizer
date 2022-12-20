@@ -5,6 +5,9 @@
     "src/**/*.tsx",
     "src/**/*.js",
     "custom.d.ts",
-    "testSetup.ts"
+    "testSetup.ts",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "playwright.config.ts"
   ]
 }

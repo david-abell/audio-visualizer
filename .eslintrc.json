@@ -39,7 +39,14 @@
     ],
     "import/no-extraneous-dependencies": [
       "error",
-      { "devDependencies": ["testSetup.ts", "**/*.spec.ts", "**/*.spec.tsx"] }
+      {
+        "devDependencies": [
+          "testSetup.ts",
+          "**/*.spec.ts",
+          "**/*.spec.tsx",
+          "playwright.config.ts"
+        ]
+      }
     ]
   }
 }
