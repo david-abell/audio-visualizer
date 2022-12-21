@@ -65,3 +65,32 @@ test("playback works after player open and close", async ({ page }) => {
   expect(paused).toBeFalsy();
   expect(played).toBeTruthy();
 });
+
+test("search should filter playlist", async ({ page }) => {
+  await page.goto("/");
+
+  await page
+    .getByRole("combobox", { name: "search by" })
+    .selectOption("Artist");
+  await page.getByRole("textbox", { name: "Search for" }).fill("mr smith");
+
+  // Should be only one song in track list
+  await expect(page.getByText("french girls")).toHaveCount(1);
+  await expect(page.getByTestId("playlist-track-button")).toHaveCount(1);
+
+  // The one song should play
+  const firstSong = page.getByTestId("playlist-track-button").first();
+  await firstSong.click();
+  await page.getByTestId("audio-node").isEnabled();
+
+  const audioNode = page.getByTestId("audio-node");
+  const paused = await audioNode.evaluate(
+    (e) => (e as HTMLAudioElement).paused
+  );
+  const played = await audioNode.evaluate(
+    (e) => (e as HTMLAudioElement).played
+  );
+
+  expect(paused).toBeFalsy();
+  expect(played).toBeTruthy();
+});
