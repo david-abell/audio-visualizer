@@ -151,8 +151,11 @@ function usePlayer(
 
   // Play / Pause on Spacebar keyboard event
   useEffect(() => {
-    const handleKeyup = (event: KeyboardEvent) => {
-      if (!audioRef.current || event.code !== "Space") return;
+    const handleKeydown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLInputElement;
+      if (!audioRef.current || event.code !== "Space" || target?.tabIndex === 0)
+        return;
+      event.preventDefault();
       if (isPlaying) {
         pause();
       } else {
@@ -160,9 +163,9 @@ function usePlayer(
       }
     };
 
-    window.addEventListener("keyup", handleKeyup);
+    window.addEventListener("keydown", handleKeydown);
     return () => {
-      window.removeEventListener("keyup", handleKeyup);
+      window.removeEventListener("keydown", handleKeydown);
     };
   }, [isPlaying, audioRef, pause, play]);
 
