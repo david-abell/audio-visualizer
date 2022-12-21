@@ -73,11 +73,15 @@ function PlayList({
       <div className={styles.listFilterContainer}>
         {/* Playlist search */}
         <div className={styles.filterContainer}>
-          <input type="text" onChange={(e) => handleFilterInput(e)} />
+          <input
+            type="text"
+            onChange={(e) => handleFilterInput(e)}
+            aria-label="Search for"
+          />
 
           <select
             value={filterBy}
-            aria-label="search criteria"
+            aria-label="search by"
             onChange={(e) => handleSelectFilterBy(e)}
           >
             {/* option values are not typechecked... */}
@@ -104,6 +108,7 @@ function PlayList({
                     type="button"
                     onClick={() => handleSelectTrack(track.id)}
                     className={styles.button}
+                    data-testid="playlist-track-button"
                   >
                     <Icon
                       icon={
