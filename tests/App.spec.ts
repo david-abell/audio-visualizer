@@ -94,3 +94,46 @@ test("search should filter playlist", async ({ page }) => {
   expect(paused).toBeFalsy();
   expect(played).toBeTruthy();
 });
+
+test("should shuffle and play", async ({ page }) => {
+  await page.goto("/");
+
+  const originalFirstSong = (
+    await page.getByTestId("playlist-track-button").all()
+  )[0];
+
+  const originalText = (await originalFirstSong.allInnerTexts()).join("");
+
+  // play the first song
+  await originalFirstSong.click();
+  await page.getByTestId("audio-node").isEnabled();
+
+  let audioNode = page.getByTestId("audio-node");
+  let paused = await audioNode.evaluate((e) => (e as HTMLAudioElement).paused);
+  let played = await audioNode.evaluate((e) => (e as HTMLAudioElement).played);
+
+  expect(paused).toBeFalsy();
+  expect(played).toBeTruthy();
+
+  await page.getByRole("button", { name: "Shuffle" }).click();
+
+  const shuffledFirstSong = (
+    await page.getByTestId("playlist-track-button").all()
+  )[0];
+
+  const shuffledText = (await shuffledFirstSong.allInnerTexts()).join("");
+
+  // original first song and new first song should not match
+  expect(originalText).not.toEqual(shuffledText);
+
+  // Play the shuffled first song
+  await shuffledFirstSong.click();
+  await page.getByTestId("audio-node").isEnabled();
+
+  audioNode = page.getByTestId("audio-node");
+  paused = await audioNode.evaluate((e) => (e as HTMLAudioElement).paused);
+  played = await audioNode.evaluate((e) => (e as HTMLAudioElement).played);
+
+  expect(paused).toBeFalsy();
+  expect(played).toBeTruthy();
+});
