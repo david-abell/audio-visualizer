@@ -144,6 +144,7 @@ function Player({
         ref={audioRef}
         preload="auto"
         autoPlay
+        data-testid="audio-node"
       >
         <track kind="captions" />
       </audio>
