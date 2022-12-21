@@ -173,6 +173,7 @@ function Player({
           className={styles.rangeSlider}
           step="any"
           ref={progressBarRef}
+          aria-label="change playback position"
         />
       </div>
 
@@ -222,6 +223,7 @@ function Player({
                     step=".01"
                     ref={volumeRef}
                     className={styles.volumeSlider}
+                    aria-label="change volume level"
                   />
                 )}
                 <button
@@ -242,9 +244,9 @@ function Player({
               <>
                 <button type="button" onClick={toggleIsMuted}>
                   {!isMuted ? (
-                    <Icon icon={soundIcon} />
+                    <Icon icon={soundIcon} aria-label="unmute volume" />
                   ) : (
-                    <Icon icon={muteIcon} />
+                    <Icon icon={muteIcon} aria-label="mute volume" />
                   )}
                 </button>
                 <input
@@ -259,6 +261,7 @@ function Player({
                   step=".01"
                   ref={volumeRef}
                   className={styles.volumeSlider}
+                  aria-label="change volume level"
                 />
               </>
             )}
@@ -286,7 +289,7 @@ function Player({
           <button
             type="button"
             onClick={handleClosePlayer}
-            area-label="Close"
+            area-label="close audio player"
             className={styles.button}
             data-testid="player-close-button"
           >

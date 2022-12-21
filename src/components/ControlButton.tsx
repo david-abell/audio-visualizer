@@ -45,6 +45,7 @@ function ControlButton({
       onKeyUp={onKeyup ? (e) => onKeyup(e) : undefined}
       data-varient={varient}
       data-labeled={labeled}
+      aria-label={action}
     >
       {action === "Play" && <Icon icon={playIcon} />}
       {action === "Pause" && <Icon icon={pauseIcon} />}
