@@ -288,6 +288,7 @@ function Player({
             onClick={handleClosePlayer}
             area-label="Close"
             className={styles.button}
+            data-testid="player-close-button"
           >
             <Icon icon={escapeIcon} aria-hidden="true" />
           </button>
