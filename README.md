@@ -81,10 +81,6 @@ Room for improvement:
 
 - A button is needed for user to disable the spectogram animation but this may require architectural changes to the useAudio hook...See chrome issue below
 
-To do:
-
-- Unit tests
-
 ## Lessons learned / Issues
 
 Include unexpected issues / bugs encountered. How were they resolved?
@@ -99,5 +95,6 @@ Include unexpected issues / bugs encountered. How were they resolved?
 
 - This project was inspired by Jack Herrington's very cool [60FPS Solid-JS Audio Spectrum Visualizer Project](https://www.youtube.com/watch?v=Xt1dNdJpgw4)
 - All audio tracks from [https://freemusicarchive.org](https://freemusicarchive.org)
+- Quill icons by Casper Lourens.
 
 <!-- ## Contact -->
